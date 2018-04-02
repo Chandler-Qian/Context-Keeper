@@ -110,6 +110,7 @@ public class MainUI{
         panel2.setLayout(null);
             
         searchbar.setBounds(200,35 , 300, 30);
+        searchbar.setEditable(false);
         searchbar.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         searchbar.setForeground(Color.gray);
         searchbar.setLayout(null);
@@ -209,6 +210,7 @@ public class MainUI{
 		//点击搜索框就清楚提示
 		searchbar.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent e) {
+			searchbar.setEditable(true);
 			 searchbar.setText("");}
 	    });
 		
@@ -217,7 +219,8 @@ public class MainUI{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
-				 if(e.getKeyCode() == KeyEvent.VK_ENTER) //判断按下的键是否是回车键
+
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) //判断按下的键是否是回车键
 				   {  
 				    Button_search.doClick();
 				   }
@@ -413,7 +416,7 @@ public class MainUI{
 		//读取Font
 		
 		JPanel searchprogress = new BackgroundPanel(image);
-		JPanel searchinfo = new BackgroundPanel(whitebackground);
+		JPanel searchinfo = new JPanel();
 		JPanel resultPanel = new BackgroundPanel(resultbackground);
 		JPanel resultTitle = new BackgroundPanel(resulttitle);
 		JPanel resultItem = new JPanel();
@@ -437,9 +440,10 @@ public class MainUI{
 		
 		
 		searchprogress.setLayout(null);
-        searchprogress.setBounds(5,5,785,100);
+        searchprogress.setBounds(5,5,1185,100);
         searchinfo.setLayout(null);
-        searchinfo.setBounds(800, 5, 385, 100);
+        searchinfo.setBounds(800, 110, 385, 525);
+        searchinfo.setBackground(new Color(255, 255, 255));
         loadingicon.setIcon(new ImageIcon("bin/loading.gif"));
         loadingicon.setBounds(5,5,80,80);
         loadingmessage.setBounds(100,40,300,20);
