@@ -34,6 +34,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -430,10 +431,18 @@ public class MainUI{
 		JLabel loadingmessage = new JLabel("正在寻找资源，可能要花费一段时间...");
 		JLabel resultlist = new JLabel("查询结果");
 		JLabel noResult = new JLabel("暂无结果...");
+		JLabel start_label = new JLabel("开始/继续",SwingConstants.CENTER);
+		JLabel pause_label = new JLabel("暂停",SwingConstants.CENTER);
+		JLabel stop_label = new JLabel("停止",SwingConstants.CENTER);
+		JButton pause_button = new JButton(new ImageIcon("bin/pause_button.png"));
+		JButton start_button = new JButton(new ImageIcon("bin/start_button.png"));
+		JButton stop_button = new JButton(new ImageIcon("bin/stop_button.png"));
 		JButton cate_Num = new JButton("序号");
 		JButton cate_Name = new JButton("资源名称");
 		JButton cate_Suffix = new JButton("拓展名");
 		JButton cate_Path = new JButton("路径");
+		JButton openfile = new JButton("设置精确路径...");
+		JFileChooser fileChooser = new JFileChooser();
 		searching.setFont(new Font("微软雅黑", Font.BOLD, 15));
 		searching.setBounds(20,10,200,20);
 	
@@ -455,9 +464,39 @@ public class MainUI{
         progressBar.setMaximum(99);
         progressBar.setStringPainted(true);
         
+        start_button.setBounds(875, 20, 40, 40);
+        start_button.setBorderPainted(false);
+        start_button.setContentAreaFilled(false);
+        start_button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        pause_button.setBounds(975, 20, 40, 40);
+        pause_button.setBorderPainted(false);
+        pause_button.setContentAreaFilled(false);
+        pause_button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        stop_button.setBounds(1075, 20, 40, 40);
+        stop_button.setContentAreaFilled(false);
+        stop_button.setBorderPainted(false);
+        stop_button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        start_label.setFont(new Font("微软雅黑", Font.BOLD, 12));
+        pause_label.setFont(new Font("微软雅黑", Font.BOLD, 12));
+        stop_label.setFont(new Font("微软雅黑", Font.BOLD, 12));
+        
+        start_label.setBounds(865, 70, 60, 20);
+        pause_label.setBounds(975, 70, 40, 20);
+        stop_label.setBounds(1075, 70, 40, 20);
+               
         searchprogress.add(searchitem);
         searchprogress.add(progressBar);
         searchprogress.add(searching);
+        searchprogress.add(pause_button);
+        searchprogress.add(start_button);
+        searchprogress.add(stop_button);
+        searchprogress.add(start_label);
+        searchprogress.add(pause_label);
+        searchprogress.add(stop_label);
+        searchprogress.add(openfile);
         searchinfo.add(loadingicon);
         searchinfo.add(loadingmessage);
         
