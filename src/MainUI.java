@@ -44,6 +44,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.text.Utilities;
 
 
 public class MainUI{
@@ -78,11 +79,14 @@ public class MainUI{
     static JButton Button_funtion2 = new JButton("行为查找",iconnull);
     static JButton Button_funtion3 = new JButton("精确查找",iconnull);
     static JButton Button_funtion4 = new JButton("设置",iconnull);
+    
+    static Thread searchThread = new Thread();
     static JLabel usericon = new JLabel();
     static JComboBox comboBox=new JComboBox();
     
     
     static Boolean isVolumeGot = false;
+    static Boolean isPause = false;
     static double searchVolume;
     static double searchVolumeTime;
     
@@ -252,14 +256,15 @@ public class MainUI{
                 	searchbar.setText("提示：未输入关键字");
                 }else{
                 	initSearchUI();
-                    new Thread(new Runnable(){
+                    searchThread = new Thread(new Runnable(){
                     	@Override
                     	public void run() {
 
                     		new BasicSearch();
-							BasicSearch.SearchFile("C://Users//骞宇澄//Desktop", keyword);
+							BasicSearch.SearchFile("C://Users//", keyword);
                     	}
-                    }).start();
+                    });
+                    searchThread.start();
                 }
 
 			}
@@ -556,41 +561,40 @@ public class MainUI{
             @Override
             public void run() {   
             	long count = 0;
+            	while(!isVolumeGot){
                 	while (count < Long.MAX_VALUE) {
-                		while(!isVolumeGot){
+                		
+                		
                 			try {  
                 				Thread.sleep(100);  
                 			} catch (InterruptedException e) {  
                 				// TODO Auto-generated catch block  
                 				e.printStackTrace();  
                 			} 
-                			count++;  
+                			count++; 
+                			
                             SwingUtilities.invokeLater(new Runnable() {                     
                                 @Override  
                                 public void run() {  
                                     // TODO Auto-generated method stub  
                                     //更新操作通过事件派发线程完成（一般实现Runnable()接口）  
-                                	searchitem.setText(BasicSearch.currentItem);  
+                                	searchitem.setText(BasicSearch.currentItem); 
+                                	
                                 }  
                             }); 
-                		}
-                		while(isVolumeGot){
-                			try {
-								Thread.sleep(Long.MAX_VALUE);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-                		}
+                			}
+                		
                 }
             }   	
         });
         searchItemThread.start();
+        
        
         //更新progressbar和搜索量、搜索时间的线程
         Thread progressBarThread = new Thread(new Runnable(){
             @Override
-            public void run() {   
+            public void run() {
+            	
                 int value = 0;
             	while (!isVolumeGot) {
                     try {  
@@ -690,6 +694,9 @@ public class MainUI{
 		    		searchinfo.add(timeTitle);
 		    		
 		    	    searchpanel.repaint();
+		    	   
+		    	    Thread.currentThread().interrupt();
+				
 		    	    return;
                 }
                 }	
@@ -705,19 +712,21 @@ public class MainUI{
             	long count = 0;
 
             	while (count < Long.MAX_VALUE) {
+            	
                     try {  
                         Thread.sleep(1000);  
                     } catch (InterruptedException e) {  
                         // TODO Auto-generated catch block  
                         e.printStackTrace();  
                     } 
-                    count = (long) (count + 0.001);  
+           
+                    count = (long) (count + 0.001); 
+                    
                         SwingUtilities.invokeLater(new Runnable() {                     
                             @Override  
                             public void run() {  
                                 // TODO Auto-generated method stub  
                                 //更新操作通过事件派发线程完成（一般实现Runnable()接口）  
-
                             		while(BasicSearch.resultlist.size() == 0){
                             			noResult.setBounds(0, 50, 100, 100);
                             			resultListDisplay.add(noResult);
@@ -808,15 +817,67 @@ public class MainUI{
                                		 		resultListDisplay.add(eachItem);  
                                		 		resultScroll.validate();
                                		 		resultScroll.repaint();
+
                                		 	}
                                		 	break;
                             		}
-                            }  
+                            	
+                            }
                         }); 
+                    
             	}	
                }    	
         });
         DisplayItemThread.start();
+        
+        //设置开始按钮监听
+        start_button.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(isPause){
+					searchThread.resume();
+					progressBarThread.resume();
+					searching.setText("当前正在过滤文件...");
+					isPause = false;
+				}
+			}
+		});
+        //设置暂停按钮监听
+        pause_button.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("----------------------------------"+searchThread.getState());
+				if(searchThread.getState().toString() == "RUNNABLE"){
+					searchThread.suspend();
+					progressBarThread.suspend();	
+					searching.setText("已暂停...");
+					isPause = true;
+				}
+				
+			}
+		});
+        //设置停止按钮监听
+        stop_button.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(searchThread.getState().toString() == "RUNNABLE"){
+					
+					searchThread.stop();
+					searchItemThread.stop();
+					progressBarThread.stop();	
+					searchitem.setText("当前已经停止过滤文件");
+					progressBar.setValue(0);
+					searching.setText("已停止...");
+				
+				}
+			}
+		});
 	}
 	
 }
