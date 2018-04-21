@@ -37,6 +37,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -270,8 +271,6 @@ public class MainUI{
                     searchThread = new Thread(new Runnable(){
                     	@Override
                     	public void run() {
-
-                    		new BasicSearch();
                     		startVolumeTime = System.nanoTime();
 							BasicSearch.SearchFile("C://Users//", keyword);
                     	}
@@ -597,9 +596,12 @@ public class MainUI{
         
         keyField.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent e) {
-			 keyField.setText("");}
+			 if(keyField.getText().equals("请输入关键字")){
+				 keyField.setText("");
+			 }}
 	    });
         
+        //浏览文件夹对话框的监听
         openfile.addActionListener(new ActionListener() {
 			
 			@Override
@@ -614,6 +616,7 @@ public class MainUI{
 			}
 		});
         
+        //清除按钮的监听
         deleteAll.addActionListener(new ActionListener() {
 			
 			@Override
@@ -623,6 +626,9 @@ public class MainUI{
 				pathField.setText("");
 			}
 		});
+        
+      
+        
         //更新searchitem的线程
         Thread searchItemThread = new Thread(new Runnable(){
         	
@@ -655,6 +661,38 @@ public class MainUI{
                 }
             }   	
         });
+        class searchItemThread extends Thread{
+        	@Override
+            public void run() {
+                // TODO Auto-generated method stub
+                super.run();
+                long count = 0;
+            	while(!isVolumeGot){
+                	while (count < Long.MAX_VALUE) {
+                		
+                		
+                			try {  
+                				Thread.sleep(100);  
+                			} catch (InterruptedException e) {  
+                				// TODO Auto-generated catch block  
+                				e.printStackTrace();  
+                			} 
+                			count++; 
+                			
+                            SwingUtilities.invokeLater(new Runnable() {                     
+                                @Override  
+                                public void run() {  
+                                    // TODO Auto-generated method stub  
+                                    //更新操作通过事件派发线程完成（一般实现Runnable()接口）  
+                                	searchitem.setText(BasicSearch.currentItem); 
+                                	
+                                }  
+                            }); 
+                			}
+                		
+                }
+            }
+        }
 //        searchItemThread.start();
         
         
@@ -930,6 +968,42 @@ public class MainUI{
                }    	
         });
 //        DisplayItemThread.start();
+      //开始查找按钮的监听
+        searchNow.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(keyField.getText().equals("") ||keyField.getText().equals("请输入关键字")){
+					JOptionPane.showMessageDialog(frame, "您未输入搜索关键字！", "无法查找", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else if(pathField.getText().equals("") ||pathField.getText().equals("精确路径")){
+					int res = JOptionPane.showConfirmDialog(frame, "您未指定查找路径，是否继续？", "是否继续", JOptionPane.OK_CANCEL_OPTION);
+					if(res == JOptionPane.YES_OPTION){
+						BasicSearch.SearchFile(pathField.getText(), keyField.getText());
+					}
+				}else{
+					
+					new	searchItemThread().start();
+					
+//					
+//					searchItemThread.start();
+//					DisplayItemThread.start();
+					searchThread = new Thread(new Runnable(){
+                    	@Override
+                    	public void run() {
+                    		startVolumeTime = System.nanoTime();
+							BasicSearch.SearchFile(pathField.getText(), keyField.getText());
+                    	}
+                    });
+                    searchThread.start();
+					
+				}
+				
+			}
+
+			
+		});
         
         //设置开始按钮监听
         start_button.addActionListener(new ActionListener() {
@@ -995,6 +1069,7 @@ public class MainUI{
 			}
 		});
 	}
+
 
 
 
