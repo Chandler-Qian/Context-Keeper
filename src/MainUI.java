@@ -68,7 +68,8 @@ public class MainUI{
 	
 	static JFrame frame = new JFrame();
 	static JPanel contentpanel = new BackgroundPanel(image);
-    static JPanel mainpanel = new BackgroundPanel(mainbackground);
+    static JPanel timeLinePanel = new BackgroundPanel(mainbackground);
+    static JPanel singleFilePanel = new BackgroundPanel(mainbackground);
     static JPanel panel1 = new TitlePanel();
     static JPanel panel2 = new JPanel();
     static JPanel tabblue = new JPanel();
@@ -78,10 +79,9 @@ public class MainUI{
     static JPanel searchinfo;
     static JTextField searchbar=new JTextField("请输入查询关键字（文件名或拓展名）"); 
     static JButton Button_search = new JButton();
-    static JButton Button_funtion1 = new JButton("您的主页",icon);
-    static JButton Button_funtion2 = new JButton("行为查找",iconnull);
+    static JButton Button_funtion1 = new JButton("时间线查找",icon);
+    static JButton Button_funtion2 = new JButton("关联查找",iconnull);
     static JButton Button_funtion3 = new JButton("精确查找",iconnull);
-    static JButton Button_funtion4 = new JButton("设置",iconnull);
     
     static Thread searchThread = new Thread();
     static JLabel usericon = new JLabel();
@@ -107,14 +107,9 @@ public class MainUI{
         frame.setResizable(false);  
         frame.setTitle("Project DEMO");  
          
-        mainpanel.setLayout(null);
-        mainpanel.setBackground(new Color(255, 255, 0));
-        mainpanel.setBounds(0,155,1200,645);
-
         tabblue.setLayout(null);
         tabblue.setBounds(0, 130, 1200, 25);
         tabblue.setBackground(new Color(38,82,179));
-        
         contentpanel.setLayout(new GridLayout(1,2,0,0));
         contentpanel.setBounds(0,0,1200,100);  
 
@@ -124,7 +119,7 @@ public class MainUI{
         panel2.setLayout(null);
             
         searchbar.setBounds(200,35 , 300, 30);
-        searchbar.setEditable(false);
+        searchbar.setEditable(true);
         searchbar.setBorder(BorderFactory.createLoweredSoftBevelBorder());
         searchbar.setForeground(Color.gray);
         searchbar.setLayout(null);
@@ -151,60 +146,21 @@ public class MainUI{
         userpanel.add(comboBox);
         userpanel.add(usericon);
         tabpanel.setBounds(0, 100, 800, 30);
-        tabpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        tabpanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
         tabpanel.setBackground(new Color(204, 204, 204));
         
-        //设置鼠标放上去变手形
-        Button_funtion1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        Button_funtion2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        Button_funtion3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        Button_funtion4.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        
-        Button_funtion1.setBorderPainted(false);
-        Button_funtion1.setHorizontalTextPosition(SwingConstants.CENTER);
-        Button_funtion1.setBackground(null);
-        Button_funtion1.setForeground(Color.white);
-        Button_funtion1.setFont(new Font("黑体", Font.BOLD, 15));
-
-        Button_funtion2.setFont(new Font("微软雅黑", Font.PLAIN, 15));
-        Button_funtion2.setForeground(new Color(38,82,179));
-        Button_funtion2.setHorizontalTextPosition(SwingConstants.CENTER);
-        Button_funtion2.setBackground(null);
-        Button_funtion2.setBorderPainted(false);
-       
-        Button_funtion3.setFont(new Font("微软雅黑", Font.PLAIN, 15));
-        Button_funtion3.setHorizontalTextPosition(SwingConstants.CENTER);
-        Button_funtion3.setForeground(new Color(38,82,179));
-        Button_funtion3.setBackground(null);
-        Button_funtion3.setBorderPainted(false);
-        
-       
-        Button_funtion4.setFont(new Font("微软雅黑", Font.PLAIN, 15));
-        Button_funtion4.setHorizontalTextPosition(SwingConstants.CENTER);
-        Button_funtion4.setForeground(new Color(38,82,179));
-        Button_funtion4.setBackground(null);
-        Button_funtion4.setBorderPainted(false);
-        
-        tabpanel.add(Button_funtion1);
-        tabpanel.add(Button_funtion2);
-        tabpanel.add(Button_funtion3);
-        tabpanel.add(Button_funtion4);
         contentpanel.add(panel1);
         contentpanel.add(panel2);
        
         searchpanel.setLayout(null);
         searchpanel.setBounds(0,155,1200,645);
         
-
-        
         //将面板加到窗体上  
         frame.add(contentpanel); 
         frame.add(tabpanel);
-        frame.add(mainpanel);
         frame.add(tabblue);
         frame.add(userpanel);
  
-        
         //设置关闭窗口时退出应用程序  
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
         frame.setVisible(true);  //显示窗体  
@@ -215,16 +171,62 @@ public class MainUI{
 		//初始化UI
 		initUI();
 		initButton();
+		initTimeLineUI();
+		initSingleFileUI();
+		initSearchUI();
 	}
 	
+	private static void initTimeLineUI() {
+		// TODO Auto-generated method stub
+        timeLinePanel.setLayout(null);
+        timeLinePanel.setBounds(0,155,1200,645);
+        
+        frame.add(timeLinePanel);
+
+	}
+
+	private static void initSingleFileUI() {
+		// TODO Auto-generated method stub
+		 singleFilePanel.setLayout(null);
+	     singleFilePanel.setBounds(0,155,1200,645);
+	        
+	     frame.add(singleFilePanel);
+	}
+
 	
 
 	private static void initButton() {
 		// TODO Auto-generated method stub
+        //设置Tab:鼠标放上去变手形
+        Button_funtion1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        Button_funtion2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        Button_funtion3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+        Button_funtion1.setBorderPainted(false);
+        Button_funtion1.setHorizontalTextPosition(SwingConstants.CENTER);
+        Button_funtion1.setBackground(null);
+        Button_funtion1.setForeground(Color.white);
+        Button_funtion1.setFont(new Font("黑体", Font.BOLD, 13));
+
+        Button_funtion2.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        Button_funtion2.setForeground(new Color(38,82,179));
+        Button_funtion2.setHorizontalTextPosition(SwingConstants.CENTER);
+        Button_funtion2.setBackground(null);
+        Button_funtion2.setBorderPainted(false);
+       
+        Button_funtion3.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        Button_funtion3.setHorizontalTextPosition(SwingConstants.CENTER);
+        Button_funtion3.setForeground(new Color(38,82,179));
+        Button_funtion3.setBackground(null);
+        Button_funtion3.setBorderPainted(false);
+        
+        tabpanel.add(Button_funtion1);
+        tabpanel.add(Button_funtion2);
+        tabpanel.add(Button_funtion3);
+        
 		//点击搜索框就清楚提示
 		searchbar.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent e) {
-			searchbar.setEditable(true);
 			 searchbar.setText("");}
 	    });
 		
@@ -285,10 +287,11 @@ public class MainUI{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
+				//以Button的方式实现点击效果
 				System.out.println("Function 1");
 				Button_funtion1.setIcon(icon);
 		        Button_funtion1.setForeground(Color.white);
-		        Button_funtion1.setFont(new Font("黑体", Font.BOLD, 15));
+		        Button_funtion1.setFont(new Font("黑体", Font.BOLD, 13));
 		        
 		        Button_funtion2.setFont(new Font("微软雅黑", Font.PLAIN, 15));
  		        Button_funtion2.setIcon(iconnull);
@@ -298,9 +301,11 @@ public class MainUI{
  		        Button_funtion3.setIcon(iconnull);
 		        Button_funtion3.setForeground(new Color(38,82,179));
 		        
-		        Button_funtion4.setFont(new Font("微软雅黑", Font.PLAIN, 15));
- 		        Button_funtion4.setIcon(iconnull);
- 		        Button_funtion4.setForeground(new Color(38,82,179));
+
+ 		        //打开Tab1，关闭其他Tab
+ 		        timeLinePanel.setVisible(true);
+ 		        singleFilePanel.setVisible(false);
+ 		        searchpanel.setVisible(false);
 			}
 		});
         Button_funtion2.addActionListener(new ActionListener() {
@@ -313,7 +318,7 @@ public class MainUI{
  		        Button_funtion2.setForeground(Color.white);
  		        Button_funtion2.setFont(new Font("黑体", Font.BOLD, 15));
  		        
- 		        Button_funtion1.setFont(new Font("微软雅黑", Font.PLAIN, 15));
+ 		        Button_funtion1.setFont(new Font("微软雅黑", Font.PLAIN, 13));
                 Button_funtion1.setForeground(new Color(38,82,179));
  		        Button_funtion1.setIcon(iconnull);
 
@@ -321,9 +326,10 @@ public class MainUI{
  		        Button_funtion3.setForeground(new Color(38,82,179));	        
  		        Button_funtion3.setIcon(iconnull);
  		        
- 		        Button_funtion4.setFont(new Font("微软雅黑", Font.PLAIN, 15));
- 		        Button_funtion4.setForeground(new Color(38,82,179));
- 		        Button_funtion4.setIcon(iconnull);
+ 		        //打开Tab1，关闭其他Tab
+ 		        timeLinePanel.setVisible(false);
+ 		        singleFilePanel.setVisible(true);
+ 		        searchpanel.setVisible(false);
  			}
  		});
         
@@ -337,7 +343,7 @@ public class MainUI{
  		        Button_funtion3.setForeground(Color.white);
  		        Button_funtion3.setFont(new Font("黑体", Font.BOLD, 15));
  		        
- 		        Button_funtion1.setFont(new Font("微软雅黑", Font.PLAIN, 15));
+ 		        Button_funtion1.setFont(new Font("微软雅黑", Font.PLAIN, 13));
                 Button_funtion1.setForeground(new Color(38,82,179));
  		        Button_funtion1.setIcon(iconnull);
 
@@ -345,37 +351,14 @@ public class MainUI{
  		        Button_funtion2.setForeground(new Color(38,82,179));        
  		        Button_funtion2.setIcon(iconnull);
  		        
- 		        Button_funtion4.setFont(new Font("微软雅黑", Font.PLAIN, 15));
- 		        Button_funtion4.setForeground(new Color(38,82,179));
- 		        Button_funtion4.setIcon(iconnull);
-
+ 		        //打开Tab1，关闭其他Tab
+ 		        timeLinePanel.setVisible(false);
+ 		        singleFilePanel.setVisible(false);
+ 		        searchpanel.setVisible(true);
  			}
  		});
         
-        Button_funtion4.addActionListener(new ActionListener() {
-			
- 			@Override
- 			public void actionPerformed(ActionEvent arg0) {
- 				// TODO Auto-generated method stub
- 				System.out.println("Function 4");
- 				Button_funtion4.setIcon(icon);
- 		        Button_funtion4.setForeground(Color.white);
- 		        Button_funtion4.setFont(new Font("黑体", Font.BOLD, 15));
- 		        
- 		        Button_funtion1.setFont(new Font("微软雅黑", Font.PLAIN, 15));
-                Button_funtion1.setForeground(new Color(38,82,179));
- 		        Button_funtion1.setIcon(iconnull);
- 		        
- 		        Button_funtion3.setFont(new Font("微软雅黑", Font.PLAIN, 15));
- 		        Button_funtion3.setForeground(new Color(38,82,179));	        
- 		        Button_funtion3.setIcon(iconnull);
- 		        
- 		        Button_funtion2.setFont(new Font("微软雅黑", Font.PLAIN, 15));
- 		        Button_funtion2.setForeground(new Color(38,82,179));
- 		        Button_funtion2.setIcon(iconnull);
- 
- 			}
- 		});
+        
 	}
 
 	//设置头部的背景颜色
@@ -438,11 +421,11 @@ public class MainUI{
 		JPanel resultItem = new JPanel();
 		JPanel resultCategory = new JPanel();
 		JPanel resultListDisplay = new JPanel();
-		JPanel pathPanel = new JPanel();
+		JPanel pathPanel = new BackgroundPanel(image);
 		JScrollPane resultScroll = new JScrollPane(resultListDisplay);
 		JProgressBar progressBar = new JProgressBar();
-		JLabel searching = new JLabel("当前正在过滤文件...");
-		JLabel searchitem = new JLabel("Searching items");
+		JLabel searching = new JLabel("请在搜索框输入关键字（并选择路径）点击开始按钮查找...");
+		JLabel searchitem = new JLabel("当前过滤项");
 		loadingicon = new JLabel();
 		loadingmessage = new JLabel("正在寻找资源，可能要花费一段时间...");
 		JLabel resultlist = new JLabel("查询结果");
@@ -450,6 +433,8 @@ public class MainUI{
 		JLabel start_label = new JLabel("开始/继续",SwingConstants.CENTER);
 		JLabel pause_label = new JLabel("暂停",SwingConstants.CENTER);
 		JLabel stop_label = new JLabel("停止",SwingConstants.CENTER);
+		JLabel key_label = new JLabel("当前关键字",SwingConstants.LEFT);
+		JLabel path_label = new JLabel("当前路径",SwingConstants.LEFT);
 		JButton pause_button = new JButton(new ImageIcon("bin/pause_button.png"));
 		JButton start_button = new JButton(new ImageIcon("bin/start_button.png"));
 		JButton stop_button = new JButton(new ImageIcon("bin/stop_button.png"));
@@ -457,15 +442,42 @@ public class MainUI{
 		JButton cate_Name = new JButton("资源名称");
 		JButton cate_Suffix = new JButton("拓展名");
 		JButton cate_Path = new JButton("路径");
-		JButton openfile = new JButton("点击指定精确路径...",new ImageIcon("bin/filechooser.png"));
+		JButton openfile = new JButton("...",new ImageIcon("bin/filechooser.png"));
+		JButton deleteAll = new JButton("清除");
+		JButton searchNow = new JButton("开始查找");
 		JFileChooser fileChooser = new JFileChooser();
+		JTextField keyField = new JTextField("请输入关键字");
+		JTextField pathField = new JTextField("精确路径");
 		searching.setFont(new Font("微软雅黑", Font.BOLD, 15));
-		searching.setBounds(20,10,200,20);
+		searching.setBounds(20,10,500,20);
 	
+		searchinfo.setVisible(false);
+		
+		deleteAll.setBounds(10, 65, 180, 25);
+		searchNow.setBounds(195, 65, 180, 25);
+		
 		pathPanel.setLayout(null);
 		pathPanel.setBounds(800, 110, 385, 95);
 
+		key_label.setBounds(10, 10, 80, 20);
+		key_label.setFont(new Font("微软雅黑", Font.BOLD, 13));
+		path_label.setBounds(10, 35, 80, 20);
+		path_label.setFont(new Font("微软雅黑", Font.BOLD, 13));
 		
+        pathField.setBounds(85,35 , 245, 20);
+        pathField.setEditable(true);
+        pathField.setEditable(false);
+        pathField.setForeground(Color.gray);
+        pathField.setLayout(null);
+        pathField.setColumns(20); 
+        
+        keyField.setBounds(85,10 , 290, 20);
+        keyField.setEditable(true);
+        keyField.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        keyField.setForeground(Color.gray);
+        keyField.setLayout(null);
+        keyField.setColumns(20); 
+        
 		searchprogress.setLayout(null);
         searchprogress.setBounds(5,5,1185,100);
         searchinfo.setLayout(null);
@@ -519,12 +531,19 @@ public class MainUI{
         searchinfo.add(loadingmessage);
         
         //选定精确位置的pathPanel
-		openfile.setBounds(10,10,150,25);
-		openfile.setFont(new Font("微软雅黑", Font.PLAIN, 10));
+		openfile.setBounds(335,35,40,20);
+		openfile.setFont(new Font("微软雅黑", Font.BOLD, 10));
+		
 		pathPanel.add(openfile);
-//		fileChooser.setBounds(0, 0, 0, 0);
-//		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//		pathPanel.add(fileChooser);
+		pathPanel.add(pathField);
+		pathPanel.add(keyField);
+		pathPanel.add(key_label);
+		pathPanel.add(path_label);
+		pathPanel.add(deleteAll);
+		pathPanel.add(searchNow);
+
+		//		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
 		
         //显示搜索结果的界面
         resultPanel.setLayout(null);
@@ -574,9 +593,36 @@ public class MainUI{
         
         frame.add(searchpanel);
 
-        mainpanel.setVisible(false);
-
+        searchpanel.setVisible(false);
         
+        keyField.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent e) {
+			 keyField.setText("");}
+	    });
+        
+        openfile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.setDialogTitle("请选择路径");
+				fileChooser.showDialog(new JLabel(), "选择");
+				File file = fileChooser.getSelectedFile();
+				pathField.setText(file.getAbsolutePath());
+				
+			}
+		});
+        
+        deleteAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				keyField.setText("");
+				pathField.setText("");
+			}
+		});
         //更新searchitem的线程
         Thread searchItemThread = new Thread(new Runnable(){
         	
@@ -609,7 +655,7 @@ public class MainUI{
                 }
             }   	
         });
-        searchItemThread.start();
+//        searchItemThread.start();
         
         
         
@@ -755,7 +801,7 @@ public class MainUI{
                 }	
                	
         });
-        progressBarThread.start(); 
+//        progressBarThread.start(); 
         
       
         
@@ -883,7 +929,7 @@ public class MainUI{
             	}	
                }    	
         });
-        DisplayItemThread.start();
+//        DisplayItemThread.start();
         
         //设置开始按钮监听
         start_button.addActionListener(new ActionListener() {
