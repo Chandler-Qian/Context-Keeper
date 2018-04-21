@@ -40,6 +40,7 @@ public class BasicSearch {
 	    	}
 	    	else{
 	    		volume = volume + file[i].length();
+	    		MainUI.searchVolume = volume/1024.0;
 	        	currentItem = file[i].getAbsolutePath();
 	        	System.out.println("----------------------------------------------------"+currentItem);
 	        	if (suffixList.contains(file[i].toString().substring(file[i].toString().lastIndexOf(".")+1)))
@@ -69,6 +70,7 @@ public class BasicSearch {
 	        			}else{
 	        				currentItem = file[i].getAbsolutePath();
 	        				volume = volume + file[i].length();
+	        				MainUI.searchVolume = volume/1024.0;
 	        				System.out.println("----------------------------------------------------"+currentItem);
 	        				if(suffixList.contains(file[i].toString().substring(file[i].toString().lastIndexOf(".")+1))){
 		        				System.out.println(file[i].getAbsolutePath());  
@@ -83,12 +85,14 @@ public class BasicSearch {
 	        	else {
 	        		System.out.println(tmp.getAbsolutePath()); 
 	        		volume = volume + tmp.length();
+	        		MainUI.searchVolume = volume/1024.0;
 	                  if(tmp.getName().indexOf(keyword) != -1){
 	                	  resultlist.add(tmp);
 	                  }
 	        	}  
 
 	        }
+	       
 	       if(list.isEmpty()){
 	    	   long endVolumeTime = System.nanoTime();
 	    	   MainUI.isVolumeGot = true;

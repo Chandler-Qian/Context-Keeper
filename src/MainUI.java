@@ -46,6 +46,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.Utilities;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 
 public class MainUI{
 	
@@ -73,6 +75,7 @@ public class MainUI{
     static JPanel tabpanel = new JPanel();
     static JPanel userpanel = new JPanel();
     static JPanel searchpanel = new BackgroundPanel(mainbackground);
+    static JPanel searchinfo;
     static JTextField searchbar=new JTextField("请输入查询关键字（文件名或拓展名）"); 
     static JButton Button_search = new JButton();
     static JButton Button_funtion1 = new JButton("您的主页",icon);
@@ -82,11 +85,17 @@ public class MainUI{
     
     static Thread searchThread = new Thread();
     static JLabel usericon = new JLabel();
+    static JLabel loadingicon;
+    static JLabel loadingmessage;
+
     static JComboBox comboBox=new JComboBox();
     
-    
+    static String keyword;
+    static long startVolumeTime;
+    static long timeUsed;
     static Boolean isVolumeGot = false;
     static Boolean isPause = false;
+    static Boolean isStop = false;
     static double searchVolume;
     static double searchVolumeTime;
     
@@ -250,7 +259,7 @@ public class MainUI{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("Search Button Pressed!");
-                String keyword = searchbar.getText();
+                keyword = searchbar.getText();
                 if (keyword.isEmpty()||keyword.equals("请输入查询关键字（文件名或拓展名）")||keyword.equals("提示：未输入关键字")){
                 	System.out.println("Search Key Word Empty!");
                 	searchbar.setText("提示：未输入关键字");
@@ -261,6 +270,7 @@ public class MainUI{
                     	public void run() {
 
                     		new BasicSearch();
+                    		startVolumeTime = System.nanoTime();
 							BasicSearch.SearchFile("C://Users//", keyword);
                     	}
                     });
@@ -422,18 +432,19 @@ public class MainUI{
 		//读取Font
 		
 		JPanel searchprogress = new BackgroundPanel(image);
-		JPanel searchinfo = new JPanel();
+		searchinfo = new JPanel();
 		JPanel resultPanel = new BackgroundPanel(resultbackground);
 		JPanel resultTitle = new BackgroundPanel(resulttitle);
 		JPanel resultItem = new JPanel();
 		JPanel resultCategory = new JPanel();
 		JPanel resultListDisplay = new JPanel();
+		JPanel pathPanel = new JPanel();
 		JScrollPane resultScroll = new JScrollPane(resultListDisplay);
 		JProgressBar progressBar = new JProgressBar();
 		JLabel searching = new JLabel("当前正在过滤文件...");
 		JLabel searchitem = new JLabel("Searching items");
-		JLabel loadingicon = new JLabel();
-		JLabel loadingmessage = new JLabel("正在寻找资源，可能要花费一段时间...");
+		loadingicon = new JLabel();
+		loadingmessage = new JLabel("正在寻找资源，可能要花费一段时间...");
 		JLabel resultlist = new JLabel("查询结果");
 		JLabel noResult = new JLabel("暂无结果...");
 		JLabel start_label = new JLabel("开始/继续",SwingConstants.CENTER);
@@ -446,17 +457,19 @@ public class MainUI{
 		JButton cate_Name = new JButton("资源名称");
 		JButton cate_Suffix = new JButton("拓展名");
 		JButton cate_Path = new JButton("路径");
-		JButton openfile = new JButton("设置精确路径...");
+		JButton openfile = new JButton("点击指定精确路径...",new ImageIcon("bin/filechooser.png"));
 		JFileChooser fileChooser = new JFileChooser();
 		searching.setFont(new Font("微软雅黑", Font.BOLD, 15));
 		searching.setBounds(20,10,200,20);
 	
-		
+		pathPanel.setLayout(null);
+		pathPanel.setBounds(800, 110, 385, 95);
+
 		
 		searchprogress.setLayout(null);
         searchprogress.setBounds(5,5,1185,100);
         searchinfo.setLayout(null);
-        searchinfo.setBounds(800, 110, 385, 525);
+        searchinfo.setBounds(800, 210, 385, 100);
         searchinfo.setBackground(new Color(255, 255, 255));
         loadingicon.setIcon(new ImageIcon("bin/loading.gif"));
         loadingicon.setBounds(5,5,80,80);
@@ -505,6 +518,14 @@ public class MainUI{
         searchinfo.add(loadingicon);
         searchinfo.add(loadingmessage);
         
+        //选定精确位置的pathPanel
+		openfile.setBounds(10,10,150,25);
+		openfile.setFont(new Font("微软雅黑", Font.PLAIN, 10));
+		pathPanel.add(openfile);
+//		fileChooser.setBounds(0, 0, 0, 0);
+//		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//		pathPanel.add(fileChooser);
+		
         //显示搜索结果的界面
         resultPanel.setLayout(null);
         resultPanel.setBounds(5, 110, 785, 500);
@@ -547,6 +568,7 @@ public class MainUI{
         resultPanel.add(resultScroll);
         resultPanel.add(resultTitle);
         searchpanel.add(searchprogress);
+        searchpanel.add(pathPanel);
         searchpanel.add(searchinfo);
         searchpanel.add(resultPanel);
         
@@ -589,14 +611,120 @@ public class MainUI{
         });
         searchItemThread.start();
         
+        
+        
+//        //更新搜索结果信息面板的线程
+//        Thread resultPanelThread = new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				if(isVolumeGot || isStop ||isPause){
+//	
+//                	searchinfo.remove(loadingicon);
+//		    		searchinfo.remove(loadingmessage);
+//		    		
+//		    		JLabel icon_volume = new JLabel();
+//		    		JLabel icon_time = new JLabel();
+//		    		JLabel infoTime = new JLabel();
+//		    		JLabel volumeUnit = new JLabel();
+//		    		JLabel infoVolume = new JLabel();
+//		    		JLabel second = new JLabel("S");
+//		    		JLabel volumeTitle = new JLabel("查询的目标文件总量");
+//		    		JLabel timeTitle = new JLabel("搜索耗时");
+//		    		System.out.println("____________"+searchVolume);
+//		    		System.out.println(searchVolumeTime);
+//		    		//更新搜索整理时间并且判断容量单位
+//		    		
+//		    		//容量小于1024KB=1MB
+//		    		if(searchVolume < 1024.0){
+//		    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
+//		    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+//		        		infoVolume.setText(String.valueOf(newVolume));
+//		        		volumeUnit.setText("KB");
+//		    		}
+//		    		//容量小于1024MB=1GB
+//		    		if(searchVolume >= 1024.0 && searchVolume < 1024.0*1024){
+//		    			searchVolume = searchVolume/1024.0;
+//		    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
+//		    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+//		        		infoVolume.setText(String.valueOf(newVolume));
+//		        		volumeUnit.setText("MB");
+//		    		}
+//		    		//容量大于1GB
+//		    		if(searchVolume >= 1024.0*1024){
+//		    			searchVolume = searchVolume/(1024.0*1024);
+//		    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
+//		    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+//		        		infoVolume.setText(String.valueOf(newVolume));
+//		        		volumeUnit.setText("GB");
+//		    		}
+//		    		volumeTitle.setBounds(65, 15, 150, 20);
+//		    		volumeTitle.setFont(new Font("微软雅黑", Font.BOLD, 13));
+//		    		timeTitle.setBounds(265, 15, 150, 20);
+//		    		timeTitle.setFont(new Font("微软雅黑", Font.BOLD, 13));
+//		    		
+//		    		if(isVolumeGot){
+//		    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolumeTime);
+//		    			double newVolumeTime = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+//		    			infoTime.setText(String.valueOf(newVolumeTime));
+//		    			infoTime.setHorizontalAlignment(SwingConstants.RIGHT);
+//		    			infoTime.setFont(getFont(25.0f));
+//		    			infoTime.setForeground(new Color(38,82,179));
+//		    		}
+//		    		if(isStop||isPause){
+//			    		java.math.BigDecimal bigDecimal = new java.math.BigDecimal(timeUsed);
+//						double newVolumeTime = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+//			    		infoTime.setText(String.valueOf(newVolumeTime));
+//			    		infoTime.setHorizontalAlignment(SwingConstants.RIGHT);
+//			    		infoTime.setFont(getFont(25.0f));
+//			    		infoTime.setForeground(new Color(38,82,179));
+//			    	}
+//
+//
+//		    		volumeUnit.setFont(getFont(15.0f));
+//		    		second.setFont(getFont(15.0f));
+//		    		second.setForeground(new Color(38,82,179));
+//		    		volumeUnit.setForeground(new Color(38,82,179));
+//
+//		    		infoVolume.setFont(getFont(25.0f));
+//		    		infoVolume.setForeground(new Color(38,82,179));
+//		    		infoVolume.setHorizontalAlignment(SwingConstants.RIGHT);
+//		    		icon_time.setIcon(new ImageIcon("bin/timeicon.png"));
+//		    		icon_volume.setIcon(new ImageIcon("bin/volumeicon.png"));
+//		    		icon_volume.setBounds(20,5,50,50);
+//		    		icon_time.setBounds(220, 5, 50, 50);
+//		    		infoVolume.setBounds(60,20 , 100, 80);
+//		    		volumeUnit.setBounds(170, 40, 60, 50);
+//		    		infoTime.setBounds(265, 20, 80, 80);
+//		    		second.setBounds(355,40,60,50);
+//		    		
+//		    		searchinfo.add(icon_volume);
+//		    		searchinfo.add(icon_time);
+//		    		searchinfo.add(infoTime);
+//		    		searchinfo.add(volumeUnit);
+//		    		searchinfo.add(infoVolume);
+//		    		searchinfo.add(second);
+//		    		searchinfo.add(volumeTitle);
+//		    		searchinfo.add(timeTitle);
+//		    		
+//		    	    searchpanel.repaint();
+//		    	    
+//		    	   
+//                }
+//		
+//				
+//			}
+//			
+//		});
        
+        
         //更新progressbar和搜索量、搜索时间的线程
         Thread progressBarThread = new Thread(new Runnable(){
             @Override
             public void run() {
-            	
                 int value = 0;
-            	while (!isVolumeGot) {
+            	while (!isVolumeGot ) {
                     try {  
                     	int max=1000;
                         int min=700;
@@ -610,99 +738,26 @@ public class MainUI{
                         // TODO Auto-generated catch block  
                         e.printStackTrace();  
                     } 
-            	}
-                while(isVolumeGot){
-
+                    
+            	}while(isVolumeGot){
                 	progressBar.setValue(100);
                 	searching.setText("查询已完成");
-                	
-                	searchinfo.remove(loadingicon);
-		    		searchinfo.remove(loadingmessage);
-		    		
-		    		JLabel icon_volume = new JLabel();
-		    		JLabel icon_time = new JLabel();
-		    		JLabel infoTime = new JLabel();
-		    		JLabel volumeUnit = new JLabel();
-		    		JLabel infoVolume = new JLabel();
-		    		JLabel second = new JLabel("S");
-		    		JLabel volumeTitle = new JLabel("查询的目标文件总量");
-		    		JLabel timeTitle = new JLabel("搜索耗时");
-		    		System.out.println("____________"+searchVolume);
-		    		System.out.println(searchVolumeTime);
-		    		//更新搜索整理时间并且判断容量单位
-		    		
-		    		//容量小于1024KB=1MB
-		    		if(searchVolume < 1024.0){
-		    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
-		    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-		        		infoVolume.setText(String.valueOf(newVolume));
-		        		volumeUnit.setText("KB");
-		    		}
-		    		//容量小于1024MB=1GB
-		    		if(searchVolume >= 1024.0 && searchVolume < 1024.0*1024){
-		    			searchVolume = searchVolume/1024.0;
-		    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
-		    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-		        		infoVolume.setText(String.valueOf(newVolume));
-		        		volumeUnit.setText("MB");
-		    		}
-		    		//容量大于1GB
-		    		if(searchVolume >= 1024.0*1024){
-		    			searchVolume = searchVolume/(1024.0*1024);
-		    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
-		    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-		        		infoVolume.setText(String.valueOf(newVolume));
-		        		volumeUnit.setText("GB");
-		    		}
-		    		volumeTitle.setBounds(65, 15, 150, 20);
-		    		volumeTitle.setFont(new Font("微软雅黑", Font.BOLD, 13));
-		    		timeTitle.setBounds(265, 15, 150, 20);
-		    		timeTitle.setFont(new Font("微软雅黑", Font.BOLD, 13));
-		    		
-		    		java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolumeTime);
-					double newVolumeTime = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-		    		infoTime.setText(String.valueOf(newVolumeTime));
-		    		infoTime.setHorizontalAlignment(SwingConstants.RIGHT);
-		    		infoTime.setFont(getFont(25.0f));
-		    		infoTime.setForeground(new Color(38,82,179));
+                	updateResultPanel();
+                	try {
+						Thread.sleep(Long.MAX_VALUE);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
-
-		    		volumeUnit.setFont(getFont(15.0f));
-		    		second.setFont(getFont(15.0f));
-		    		second.setForeground(new Color(38,82,179));
-		    		volumeUnit.setForeground(new Color(38,82,179));
-
-		    		infoVolume.setFont(getFont(25.0f));
-		    		infoVolume.setForeground(new Color(38,82,179));
-		    		infoVolume.setHorizontalAlignment(SwingConstants.RIGHT);
-		    		icon_time.setIcon(new ImageIcon("bin/timeicon.png"));
-		    		icon_volume.setIcon(new ImageIcon("bin/volumeicon.png"));
-		    		icon_volume.setBounds(20,5,50,50);
-		    		icon_time.setBounds(220, 5, 50, 50);
-		    		infoVolume.setBounds(60,20 , 100, 80);
-		    		volumeUnit.setBounds(170, 40, 60, 50);
-		    		infoTime.setBounds(265, 20, 80, 80);
-		    		second.setBounds(355,40,60,50);
-		    		
-		    		searchinfo.add(icon_volume);
-		    		searchinfo.add(icon_time);
-		    		searchinfo.add(infoTime);
-		    		searchinfo.add(volumeUnit);
-		    		searchinfo.add(infoVolume);
-		    		searchinfo.add(second);
-		    		searchinfo.add(volumeTitle);
-		    		searchinfo.add(timeTitle);
-		    		
-		    	    searchpanel.repaint();
-		    	   
-		    	    Thread.currentThread().interrupt();
-				
-		    	    return;
                 }
+                
                 }	
                	
         });
-        progressBarThread.start();     
+        progressBarThread.start(); 
+        
+      
         
         //更新搜索结果面板的线程
         Thread DisplayItemThread = new Thread(new Runnable(){
@@ -837,10 +892,19 @@ public class MainUI{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if(isPause){
+					
 					searchThread.resume();
 					progressBarThread.resume();
 					searching.setText("当前正在过滤文件...");
+					
 					isPause = false;
+					resumeSearch();
+				}
+				if(isStop){
+					Button_search.doClick();
+					searching.setText("当前正在过滤文件...");
+					isStop = false;
+					resumeSearch();
 				}
 			}
 		});
@@ -852,10 +916,13 @@ public class MainUI{
 				// TODO Auto-generated method stub
 				System.out.println("----------------------------------"+searchThread.getState());
 				if(searchThread.getState().toString() == "RUNNABLE"){
+					timeUsed = (long) ((System.nanoTime()-startVolumeTime)/ 1.0e9);
 					searchThread.suspend();
 					progressBarThread.suspend();	
 					searching.setText("已暂停...");
+					
 					isPause = true;
+					updateResultPanel();
 				}
 				
 			}
@@ -867,17 +934,129 @@ public class MainUI{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if(searchThread.getState().toString() == "RUNNABLE"){
-					
+					timeUsed = (long) ((System.nanoTime()-startVolumeTime)/ 1.0e9);
 					searchThread.stop();
 					searchItemThread.stop();
 					progressBarThread.stop();	
 					searchitem.setText("当前已经停止过滤文件");
+					
 					progressBar.setValue(0);
 					searching.setText("已停止...");
+					isStop = true;
+					updateResultPanel();
 				
 				}
 			}
 		});
+	}
+
+
+
+	protected static void updateResultPanel() {
+		// TODO Auto-generated method stub
+		if(isVolumeGot || isStop ||isPause){
+			
+//        	searchinfo.remove(loadingicon);
+//    		searchinfo.remove(loadingmessage);
+
+    		loadingicon.setVisible(false);
+    		loadingmessage.setVisible(false);
+    		
+    		JLabel icon_volume = new JLabel();
+    		JLabel icon_time = new JLabel();
+    		JLabel infoTime = new JLabel();
+    		JLabel volumeUnit = new JLabel();
+    		JLabel infoVolume = new JLabel();
+    		JLabel second = new JLabel("S");
+    		JLabel volumeTitle = new JLabel("查询的目标文件总量");
+    		JLabel timeTitle = new JLabel("搜索耗时");
+    		System.out.println("____________"+searchVolume);
+    		System.out.println(searchVolumeTime);
+    		//更新搜索整理时间并且判断容量单位
+    		
+    		//容量小于1024KB=1MB
+    		if(searchVolume < 1024.0){
+    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
+    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+        		infoVolume.setText(String.valueOf(newVolume));
+        		volumeUnit.setText("KB");
+    		}
+    		//容量小于1024MB=1GB
+    		if(searchVolume >= 1024.0 && searchVolume < 1024.0*1024){
+    			searchVolume = searchVolume/1024.0;
+    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
+    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+        		infoVolume.setText(String.valueOf(newVolume));
+        		volumeUnit.setText("MB");
+    		}
+    		//容量大于1GB
+    		if(searchVolume >= 1024.0*1024){
+    			searchVolume = searchVolume/(1024.0*1024);
+    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolume);
+    			double newVolume = bigDecimal.setScale(1, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+        		infoVolume.setText(String.valueOf(newVolume));
+        		volumeUnit.setText("GB");
+    		}
+    		volumeTitle.setBounds(65, 15, 150, 20);
+    		volumeTitle.setFont(new Font("微软雅黑", Font.BOLD, 13));
+    		timeTitle.setBounds(265, 15, 150, 20);
+    		timeTitle.setFont(new Font("微软雅黑", Font.BOLD, 13));
+    		
+    		if(isVolumeGot){
+    			java.math.BigDecimal bigDecimal = new java.math.BigDecimal(searchVolumeTime);
+    			double newVolumeTime = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+    			infoTime.setText(String.valueOf(newVolumeTime));
+    			infoTime.setHorizontalAlignment(SwingConstants.RIGHT);
+    			infoTime.setFont(getFont(25.0f));
+    			infoTime.setForeground(new Color(38,82,179));
+    		}
+    		if(isStop||isPause){
+	    		java.math.BigDecimal bigDecimal = new java.math.BigDecimal(timeUsed);
+				double newVolumeTime = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+	    		infoTime.setText(String.valueOf(newVolumeTime));
+	    		infoTime.setHorizontalAlignment(SwingConstants.RIGHT);
+	    		infoTime.setFont(getFont(25.0f));
+	    		infoTime.setForeground(new Color(38,82,179));
+	    	}
+
+
+    		volumeUnit.setFont(getFont(15.0f));
+    		second.setFont(getFont(15.0f));
+    		second.setForeground(new Color(38,82,179));
+    		volumeUnit.setForeground(new Color(38,82,179));
+
+    		infoVolume.setFont(getFont(25.0f));
+    		infoVolume.setForeground(new Color(38,82,179));
+    		infoVolume.setHorizontalAlignment(SwingConstants.RIGHT);
+    		icon_time.setIcon(new ImageIcon("bin/timeicon.png"));
+    		icon_volume.setIcon(new ImageIcon("bin/volumeicon.png"));
+    		icon_volume.setBounds(20,5,50,50);
+    		icon_time.setBounds(220, 5, 50, 50);
+    		infoVolume.setBounds(60,20 , 100, 80);
+    		volumeUnit.setBounds(170, 40, 60, 50);
+    		infoTime.setBounds(265, 20, 80, 80);
+    		second.setBounds(355,40,60,50);
+    		
+    		searchinfo.add(icon_volume);
+    		searchinfo.add(icon_time);
+    		searchinfo.add(infoTime);
+    		searchinfo.add(volumeUnit);
+    		searchinfo.add(infoVolume);
+    		searchinfo.add(second);
+    		searchinfo.add(volumeTitle);
+    		searchinfo.add(timeTitle);
+    		
+    	    searchpanel.repaint();
+    	    
+    	   
+	}
+
+	}
+	protected static void resumeSearch() {
+		// TODO Auto-generated method stub
+		searchinfo.repaint();
+		
+
 	}
 	
 }
