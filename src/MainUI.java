@@ -86,7 +86,7 @@ public class MainUI{
     static JButton Button_funtion3 = new JButton("精确查找",iconnull);
     
     static Thread searchThread = new Thread();
-    static Thread thread1,thread2,thread3;
+    static Thread thread1,thread2,thread3,threadControl;
     static JLabel usericon = new JLabel();
     static JLabel loadingicon;
     static JLabel loadingmessage;
@@ -436,20 +436,26 @@ public class MainUI{
 		
 		JPanel detailPanel = new BackgroundPanel(resultbackground);
 		JPanel detailTitlePanel = new BackgroundPanel(resulttitle);
-		JLabel detailName = new JLabel("11111111111111111111111111111111111111111111111111111111");
+		JTextArea detailName = new JTextArea("文件名称");
 		JLabel fileLabel = new JLabel("文件",SwingConstants.LEFT);
-		JLabel detailSize = new JLabel("32342424");
-		JLabel detailTime = new JLabel("23322222222");
-		JTextArea detailPath = new JTextArea("323333333333333333333333333333333");
+		JLabel detailSize = new JLabel("文件大小");
+		JLabel detailTime = new JLabel("上次修改时间");
+		JTextArea detailPath = new JTextArea("文件路径");
+		JLabel nameLabel = new JLabel("文件名称",SwingConstants.CENTER);
+		JLabel sizeLabel = new JLabel("文件大小",SwingConstants.CENTER);
+		JLabel timeLabel = new JLabel("上次修改",SwingConstants.CENTER);
+		JLabel pathLabel = new JLabel("文件路径",SwingConstants.CENTER);
 		JLabel detailIcon = new JLabel();
 		JButton openFileButton = new JButton("打开文件");
 		JButton singleFileAccess = new JButton("查找关联文件");
+
 		JScrollPane resultScroll = new JScrollPane(resultListDisplay);
 		JProgressBar progressBar = new JProgressBar();
 		JLabel searching = new JLabel("请在搜索框输入关键字（并选择路径）点击开始按钮查找...");
 		JLabel searchitem = new JLabel("当前过滤项");
 		loadingicon = new JLabel();
 		loadingmessage = new JLabel("正在寻找资源，可能要花费一段时间...");
+		 
 		JLabel resultlist = new JLabel("查询结果");
 		JLabel noResult = new JLabel("暂无结果...");
 		JLabel start_label = new JLabel("开始/继续",SwingConstants.CENTER);
@@ -564,7 +570,7 @@ public class MainUI{
 		pathPanel.add(deleteAll);
 		pathPanel.add(searchNow);
 
-		detailPanel.setBounds(800, 310, 385, 290);
+		detailPanel.setBounds(800, 305, 385, 305);
 		
 		detailPanel.setLayout(null);
 		detailTitlePanel.add(fileLabel);
@@ -576,16 +582,34 @@ public class MainUI{
 		detailIcon.setIcon(new ImageIcon("bin/icon_doc.png"));
 		fileLabel.setForeground(new Color(255, 255, 255));
 		fileLabel.setBounds(10,0,30,25);
-        fileLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
-        detailName.setBounds(30, 130, 320, 30);
+		
+        
+        detailName.setBounds(90, 130, 270, 40);
         detailName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
-        detailSize.setBounds(30, 170, 320, 30);
+        detailSize.setBounds(90, 175, 270, 20);
         detailSize.setFont(new Font("微软雅黑", Font.PLAIN, 13));
-        detailTime.setBounds(30, 210, 320, 30);
+        detailTime.setBounds(90, 210, 270, 20);
         detailTime.setFont(new Font("微软雅黑", Font.PLAIN, 13));
-        detailPath.setBounds(30, 250, 320, 30);
-        detailPath.setBackground(null);
+        detailPath.setBounds(90, 245, 270, 60);
         detailPath.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        
+        nameLabel.setBounds(10, 130, 70, 20);
+        sizeLabel.setBounds(10, 175, 70, 20);
+        timeLabel.setBounds(10, 210, 70, 20);
+        pathLabel.setBounds(10, 245, 70, 20);
+        
+        fileLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        nameLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        timeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        sizeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        pathLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        detailPath.setBackground(null);
+        detailName.setBackground(null);
+        
+        detailPath.setLineWrap(true);
+        detailName.setLineWrap(true);
+        detailPath.setWrapStyleWord(true);
+        detailName.setWrapStyleWord(true);
 		detailPanel.add(detailTitlePanel);
 		detailPanel.add(detailIcon);
 		detailPanel.add(openFileButton);
@@ -594,6 +618,10 @@ public class MainUI{
 		detailPanel.add(detailSize);
 		detailPanel.add(detailTime);
 		detailPanel.add(detailPath);
+		detailPanel.add(nameLabel);
+		detailPanel.add(sizeLabel);
+		detailPanel.add(timeLabel);
+		detailPanel.add(pathLabel);
 		detailPanel.setVisible(false);
 		
         //显示搜索结果的界面
@@ -669,7 +697,21 @@ public class MainUI{
 				
 			}
 		});
-        
+        openFileButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					System.out.println("Open"+detailPath.getText());
+					
+					Desktop.getDesktop().open(new File(detailPath.getText()));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
         //清除按钮的监听
         deleteAll.addActionListener(new ActionListener() {
 			
@@ -842,6 +884,7 @@ public class MainUI{
                                     		 		fileName.setForeground(new Color(0, 0, 139));
                                     		 		fileSuffix.setFont(new Font("微软雅黑", Font.PLAIN, 13));
                                     		 		filePath.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                                    		 		
                                     		 		fileName.addMouseListener(new MouseListener() {
      												
      												@Override
@@ -882,15 +925,29 @@ public class MainUI{
      													// TODO Auto-generated method stub
      													fileName.setForeground(Color.gray);
      											        
-//     													try {
-////     														Desktop.getDesktop().open(BasicSearch.resultlist.get(j));
-//     													} catch (IOException e1) {
-//     														// TODO Auto-generated catch block
-//     														e1.printStackTrace();
-//     													}
+//     													
      													detailName.setText(BasicSearch.resultlist.get(j).getName());
-     													detailSize.setText(Long.toString(BasicSearch.resultlist.get(j).length()));
+     													double size = BasicSearch.resultlist.get(j).length()/1024.0;
+     													if(size < 1024.0){
+     														java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+     										    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+     														detailSize.setText(newSize+" KB");
+     													}
+     													else if(size > 1024.0 && size < 1024.0*1024.0){
+     														size = size/1024.0;
+     														java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+     										    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+     														detailSize.setText(newSize+" MB");
+     													}else{
+     														size = size/(1024.0*1024.0);
+     														java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+     										    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+     														detailSize.setText(newSize+" GB");
+     													}
      													detailPath.setText(BasicSearch.resultlist.get(j).getAbsolutePath());
+     													java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+     													String dateTime = df.format(BasicSearch.resultlist.get(j).lastModified());
+     													detailTime.setText(dateTime);
      													detailPanel.setVisible(true);
      												}
      											});
@@ -915,7 +972,53 @@ public class MainUI{
                
             }
         }
+        
+      threadControl = new Thread(new Runnable() {
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			long count = 0;
+         	while (count < Long.MAX_VALUE) {
+         	
+                 try {  
+                     Thread.sleep(1000);  
+                 } catch (InterruptedException e) {  
+                     // TODO Auto-generated catch block  
+                     e.printStackTrace();  
+                 } 
+                 count = (long) (count + 0.001); 
+                     SwingUtilities.invokeLater(new Runnable() {                     
+                         @Override  
+                         public void run() {
+                        	 if(isVolumeGot){
+                        		 System.out.println("threadControl Working");
+                 	        	if(searchThread.isAlive()){
+                 					searchThread.stop();
+                 				}
+                 				
+                 				if(thread1.isAlive()){
+                 					thread1.stop();
+                 					}
+                 				
+                 				if(thread3.isAlive()){
+                 				thread3.stop();
+                 				}
+                 				System.out.println(thread1.getState());
+                 				System.out.println(thread2.getState());
+                 				System.out.println(thread3.getState());
+                 				System.out.println(searchThread.getState());
+                        	 }
+                         }
+                         });
+				
+	        }
+		}
+	});
+      threadControl.start();
       
+
+        
         //开始查找按钮的监听
         searchNow.addActionListener(new ActionListener() {
 			
@@ -934,6 +1037,7 @@ public class MainUI{
 					searching.setText("当前正在过滤文件...");
 					value = 0;
 					searchinfo.setVisible(true);
+                    detailPanel.setVisible(false);
 					resultListDisplay.removeAll();
 					resultListDisplay.add(resultCategory);
 					resultScroll.repaint();
@@ -971,10 +1075,22 @@ public class MainUI{
 				if(thread3.isAlive()){
 				thread3.destroy();;
 				}
-				value  = 0;
-				isVolumeGot = false;
-
 				
+				value  = 0;
+				
+				if(isVolumeGot){
+				 searchinfo.remove(icon_time);
+			        searchinfo.remove(icon_volume);
+			        searchinfo.remove(infoTime);
+			        searchinfo.remove(volumeUnit);
+			        searchinfo.remove(infoVolume);
+			        searchinfo.remove(second);
+			        searchinfo.remove(volumeTitle);
+			        searchinfo.remove(timeTitle);
+					loadingicon.setVisible(true);
+					loadingmessage.setVisible(true);
+				}
+				isVolumeGot = false;
 			}
 
 			
