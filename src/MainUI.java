@@ -45,6 +45,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.ProgressBarUI;
 import javax.swing.text.Utilities;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -85,12 +86,14 @@ public class MainUI{
     static JButton Button_funtion3 = new JButton("精确查找",iconnull);
     
     static Thread searchThread = new Thread();
+    static Thread thread1,thread2,thread3;
     static JLabel usericon = new JLabel();
     static JLabel loadingicon;
     static JLabel loadingmessage;
 
     static JComboBox comboBox=new JComboBox();
     
+    static int value = 0;
     static String keyword;
     static long startVolumeTime;
     static long timeUsed;
@@ -662,35 +665,43 @@ public class MainUI{
             }   	
         });
         class searchItemThread extends Thread{
+        	private boolean stop = false;
+
+            public void stopTask() {
+                stop = true;
+            }
         	@Override
             public void run() {
                 // TODO Auto-generated method stub
-                super.run();
-                long count = 0;
-            	while(!isVolumeGot){
-                	while (count < Long.MAX_VALUE) {
-                		
-                		
-                			try {  
-                				Thread.sleep(100);  
-                			} catch (InterruptedException e) {  
-                				// TODO Auto-generated catch block  
-                				e.printStackTrace();  
-                			} 
-                			count++; 
-                			
-                            SwingUtilities.invokeLater(new Runnable() {                     
-                                @Override  
-                                public void run() {  
-                                    // TODO Auto-generated method stub  
-                                    //更新操作通过事件派发线程完成（一般实现Runnable()接口）  
-                                	searchitem.setText(BasicSearch.currentItem); 
-                                	
-                                }  
-                            }); 
-                			}
-                		
-                }
+        		while(!stop){
+        			 super.run();
+                     long count = 0;
+                 	while(!isVolumeGot){
+                     	while (count < Long.MAX_VALUE) {
+                     		
+                     		
+                     			try {  
+                     				Thread.sleep(100);  
+                     			} catch (InterruptedException e) {  
+                     				// TODO Auto-generated catch block  
+                     				e.printStackTrace();  
+                     			} 
+                     			count++; 
+                     			
+                                 SwingUtilities.invokeLater(new Runnable() {                     
+                                     @Override  
+                                     public void run() {  
+                                         // TODO Auto-generated method stub  
+                                         //更新操作通过事件派发线程完成（一般实现Runnable()接口）  
+                                     	searchitem.setText(BasicSearch.currentItem); 
+                                     	
+                                     }  
+                                 }); 
+                     			}
+                     		
+                     }
+        		}
+               
             }
         }
 //        searchItemThread.start();
@@ -805,20 +816,28 @@ public class MainUI{
         
         //更新progressbar和搜索量、搜索时间的线程
         Thread progressBarThread = new Thread(new Runnable(){
+        	
             @Override
             public void run() {
-                int value = 0;
+            
+
             	while (!isVolumeGot ) {
-                    try {  
+            		if(value < 99){
+                   	progressBar.setValue(value);
+                	value++;
+            		}
+                    try {
+                    	
                     	int max=1000;
                         int min=700;
                         Random random = new Random();
                         int s = random.nextInt(max)%(max-min+1) + min;
-                    	progressBar.setValue(value);
-                    	value++;
+ 
                     	Thread.sleep(s); 
+                    	}
                     	
-                    } catch (InterruptedException e) {  
+                    	
+                     catch (InterruptedException e) {  
                         // TODO Auto-generated catch block  
                         e.printStackTrace();  
                     } 
@@ -829,6 +848,7 @@ public class MainUI{
                 	updateResultPanel();
                 	try {
 						Thread.sleep(Long.MAX_VALUE);
+						
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -840,7 +860,56 @@ public class MainUI{
                	
         });
 //        progressBarThread.start(); 
-        
+        class progressBarThread extends Thread{
+        	
+        	private boolean stop = false;
+        	
+        	public void stopTask(){
+        		stop = true;
+        	}
+        	@Override
+            public void run() {
+                // TODO Auto-generated method stub
+        		while(!stop){
+        			super.run();
+                    
+        			while (!isVolumeGot ) {
+                		if(value < 99){
+                       	progressBar.setValue(value);
+                    	value++;
+                		}
+                        try {
+                        	
+                        	int max=1000;
+                            int min=700;
+                            Random random = new Random();
+                            int s = random.nextInt(max)%(max-min+1) + min;
+     
+                        	Thread.sleep(s); 
+                        	}
+                        	
+                        	
+                         catch (InterruptedException e) {  
+                            // TODO Auto-generated catch block  
+                            e.printStackTrace();  
+                        } 
+                        
+                	}
+                	while(isVolumeGot){
+                    	progressBar.setValue(100);
+                    	searching.setText("查询已完成");
+                    	updateResultPanel();
+                    	try {
+    						Thread.sleep(Long.MAX_VALUE);
+    					} catch (InterruptedException e) {
+    						// TODO Auto-generated catch block
+    						e.printStackTrace();
+    					}
+                    }
+        		}
+                
+            }
+        }
       
         
         //更新搜索结果面板的线程
@@ -874,6 +943,9 @@ public class MainUI{
                                        	break;
                             		}
                             		while(BasicSearch.resultlist.size() != 0){
+                            			resultListDisplay.removeAll();
+                            			resultListDisplay.add(resultCategory);
+                            			resultScroll.repaint();
                             			resultListDisplay.setPreferredSize(new Dimension(1000, (BasicSearch.resultlist.size()+1)*20));
      
                                		 	for(int i = 0; i < BasicSearch.resultlist.size();i++){
@@ -968,6 +1040,140 @@ public class MainUI{
                }    	
         });
 //        DisplayItemThread.start();
+        
+        class DisplayItemThread extends Thread{
+        	private boolean stop = false;
+
+            public void stopTask() {
+                stop = true;
+            }
+        	@Override
+            public void run() {
+                // TODO Auto-generated method stub
+        		while(!stop){
+        			 super.run();
+                     long count = 0;
+
+                 	while (count < Long.MAX_VALUE) {
+                 	
+                         try {  
+                             Thread.sleep(1000);  
+                         } catch (InterruptedException e) {  
+                             // TODO Auto-generated catch block  
+                             e.printStackTrace();  
+                         } 
+                
+                         count = (long) (count + 0.001); 
+                         
+                             SwingUtilities.invokeLater(new Runnable() {                     
+                                 @Override  
+                                 public void run() {  
+                                     // TODO Auto-generated method stub  
+                                     //更新操作通过事件派发线程完成（一般实现Runnable()接口）  
+                                 		while(BasicSearch.resultlist.size() == 0){
+                                 			noResult.setBounds(0, 50, 100, 100);
+                                 			resultListDisplay.add(noResult);
+//                                             resultScroll.validate();
+//                                            	resultScroll.repaint();
+                                            	break;
+                                 		}
+                                 		while(BasicSearch.resultlist.size() != 0){
+                                 			resultListDisplay.setPreferredSize(new Dimension(1000, (BasicSearch.resultlist.size()+1)*20));
+          
+                                    		 	for(int i = 0; i < BasicSearch.resultlist.size();i++){
+                                    		 		int j = i;
+                                    		 		JPanel eachItem = new JPanel();
+                                    		 		eachItem.setLayout(null); 
+                                    		 		eachItem.setBounds(0, 20*(i+1), 1000, 20);
+                                    		 		JLabel fileSequence = new JLabel(String.valueOf((i+1)));
+                                    		 		fileSequence.setFont(getFont(13));
+                                    		 		MyToolTip fileName = new MyToolTip();
+                                    		 		fileName.setText(BasicSearch.resultlist.get(i).getName());
+                                    		 		fileName.setToolTipText(BasicSearch.resultlist.get(i).getName());
+                                    		 		JLabel fileSuffix = new JLabel((BasicSearch.resultlist.get(i).getAbsolutePath().substring(BasicSearch.resultlist.get(i).getAbsolutePath().lastIndexOf(".")+1)));
+                                    		 		MyToolTip filePath = new MyToolTip();
+                                    		 		filePath.setText(BasicSearch.resultlist.get(i).getAbsolutePath());
+                                    		 		filePath.setToolTipText(BasicSearch.resultlist.get(i).getAbsolutePath());
+                                    		 		fileSequence.setBounds(0,0,70,20);
+                                    		 		fileSequence.setHorizontalAlignment(SwingConstants.CENTER);
+                                    		 		fileName.setBounds(70,0,200,20);
+                                    		 		
+                                    		 		fileSuffix.setBounds(290,0,80,20);
+                                    		 		filePath.setBounds(370,0,630,20);
+//                                    		 		fileSequence.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                                    		 		fileName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                                    		 		fileName.setForeground(new Color(0, 0, 139));
+                                    		 		fileSuffix.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                                    		 		filePath.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                                    		 		fileName.addMouseListener(new MouseListener() {
+     												
+     												@Override
+     												public void mouseReleased(MouseEvent e) {
+     													// TODO Auto-generated method stub
+     													fileName.setForeground(Color.gray);
+     												}
+     												
+     												@Override
+     												public void mousePressed(MouseEvent e) {
+     													// TODO Auto-generated method stub
+     													
+     												}
+     												
+     												@Override
+     												public void mouseExited(MouseEvent e) {
+     													// TODO Auto-generated method stub
+     													if(fileName.getForeground() != Color.gray){
+     														fileName.setForeground(new Color(0, 0, 139));
+     														fileName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+     													}
+     											
+     													
+     												}
+     												
+     												@Override
+     												public void mouseEntered(MouseEvent e) {
+     													// TODO Auto-generated method stub
+     										            if(fileName.getForeground() != Color.gray){
+     														fileName.setForeground(Color.BLUE);
+     														fileName.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+     														 fileName.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+     										            }
+     												}
+     												
+     												@Override
+     												public void mouseClicked(MouseEvent e) {
+     													// TODO Auto-generated method stub
+     													fileName.setForeground(Color.gray);
+     											        
+     													try {
+     														Desktop.getDesktop().open(BasicSearch.resultlist.get(j));
+     													} catch (IOException e1) {
+     														// TODO Auto-generated catch block
+     														e1.printStackTrace();
+     													}
+     												}
+     											});
+                                    		 		eachItem.add(fileSequence);
+                                    		 		eachItem.add(fileName);
+                                    		 		eachItem.add(fileSuffix);
+                                    		 		eachItem.add(filePath);
+                                    		 		resultListDisplay.add(eachItem);  
+                                    		 		resultScroll.validate();
+                                    		 		resultScroll.repaint();
+
+                                    		 	}
+                                    		 	break;
+                                 		}
+                                 	
+                                 }
+                             }); 
+                         
+                 	}	
+        		}
+               
+               
+            }
+        }
       //开始查找按钮的监听
         searchNow.addActionListener(new ActionListener() {
 			
@@ -983,12 +1189,14 @@ public class MainUI{
 						BasicSearch.SearchFile(pathField.getText(), keyField.getText());
 					}
 				}else{
-					
-					new	searchItemThread().start();
-					
-//					
-//					searchItemThread.start();
-//					DisplayItemThread.start();
+					searching.setText("当前正在过滤文件...");
+					value = 0;
+					resultListDisplay.removeAll();
+					resultListDisplay.add(resultCategory);
+					resultScroll.repaint();
+					thread1 = new searchItemThread();
+					thread2 = new progressBarThread();
+					thread3 = new DisplayItemThread();
 					searchThread = new Thread(new Runnable(){
                     	@Override
                     	public void run() {
@@ -996,9 +1204,39 @@ public class MainUI{
 							BasicSearch.SearchFile(pathField.getText(), keyField.getText());
                     	}
                     });
+					
+					freshSearchUI();
+						
+					thread1.start();
+					
+					thread2.start();
+					
+					thread3.start();
+					
                     searchThread.start();
 					
 				}
+				
+			}
+
+			private void freshSearchUI() {
+				// TODO Auto-generated method stub
+				if(searchThread.isAlive()){
+					searchThread.destroy();
+				}
+				
+				if(thread1.isAlive()){
+					thread1.destroy();;
+					}
+				if(thread2.isAlive()){
+				thread2.destroy();;
+				}
+				if(thread3.isAlive()){
+				thread3.destroy();;
+				}
+				value  = 0;
+				isVolumeGot = false;
+
 				
 			}
 
@@ -1014,14 +1252,15 @@ public class MainUI{
 				if(isPause){
 					
 					searchThread.resume();
-					progressBarThread.resume();
+					thread2.resume();
 					searching.setText("当前正在过滤文件...");
 					
 					isPause = false;
 					resumeSearch();
 				}
 				if(isStop){
-					Button_search.doClick();
+					resultListDisplay.removeAll();
+					searchNow.doClick();
 					searching.setText("当前正在过滤文件...");
 					isStop = false;
 					resumeSearch();
@@ -1038,7 +1277,7 @@ public class MainUI{
 				if(searchThread.getState().toString() == "RUNNABLE"){
 					timeUsed = (long) ((System.nanoTime()-startVolumeTime)/ 1.0e9);
 					searchThread.suspend();
-					progressBarThread.suspend();	
+					thread2.suspend();	
 					searching.setText("已暂停...");
 					
 					isPause = true;
@@ -1056,11 +1295,11 @@ public class MainUI{
 				if(searchThread.getState().toString() == "RUNNABLE"){
 					timeUsed = (long) ((System.nanoTime()-startVolumeTime)/ 1.0e9);
 					searchThread.stop();
-					searchItemThread.stop();
-					progressBarThread.stop();	
+					thread1.stop();
+					thread2.stop();	
 					searchitem.setText("当前已经停止过滤文件");
 					
-					progressBar.setValue(0);
+					value = 0;
 					searching.setText("已停止...");
 					isStop = true;
 					updateResultPanel();
@@ -1069,6 +1308,8 @@ public class MainUI{
 			}
 		});
 	}
+
+
 
 
 
@@ -1175,7 +1416,7 @@ public class MainUI{
 	}
 	protected static void resumeSearch() {
 		// TODO Auto-generated method stub
-		searchinfo.repaint();
+//		searchinfo.repaint();
 		
 
 	}
