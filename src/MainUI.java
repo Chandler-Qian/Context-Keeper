@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Panel;
 import java.awt.Rectangle;
 import java.awt.ScrollPane;
 import java.awt.Toolkit;
@@ -118,7 +119,7 @@ public class MainUI{
         frame.setLayout(null);  //自由布局  
         frame.setBounds((ScreenWidth - windowsWidth) / 2, (ScreenHeight - windowsHeight) / 2, windowsWidth, windowsHeight);  //边大小  
         frame.setResizable(false);  
-        frame.setTitle("Project DEMO");  
+        frame.setTitle("CONTEXT|KEEPER 文件可视化系统");  
          
         tabblue.setLayout(null);
         tabblue.setBounds(0, 130, 1200, 25);
@@ -189,14 +190,7 @@ public class MainUI{
 		initSearchUI();
 	}
 	
-	private static void initTimeLineUI() {
-		// TODO Auto-generated method stub
-        timeLinePanel.setLayout(null);
-        timeLinePanel.setBounds(0,155,1200,645);
-        
-        frame.add(timeLinePanel);
-
-	}
+	
 
 	private static void initSingleFileUI() {
 		// TODO Auto-generated method stub
@@ -1281,4 +1275,34 @@ public class MainUI{
 		loadingmessage.setVisible(true);
 	}
 	
+	//初始化时间线UI
+	private static void initTimeLineUI() {
+		// TODO Auto-generated method stub
+        timeLinePanel.setLayout(null);
+        timeLinePanel.setBounds(0,155,1200,645);
+        frame.add(timeLinePanel);
+        
+        JPanel timeLineSearchPanel = new BackgroundPanel(image);
+        JPanel fileRrepresentationPanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
+        JPanel statPanel = new JPanel();
+        JPanel detailPanel = new BackgroundPanel(resultbackground);
+        
+        fileRrepresentationPanel.setLayout(null);
+        fileRrepresentationPanel.setBounds(5,110,800,500);
+        
+        timeLineSearchPanel.setLayout(null);
+        timeLineSearchPanel.setBounds(5,5,800,100);
+        
+        statPanel.setLayout(null);
+        statPanel.setBackground(Color.WHITE);
+        statPanel.setBounds(810,5,380,300);
+        
+        detailPanel.setLayout(null);
+        detailPanel.setBounds(810,310,380,300);
+        
+        timeLinePanel.add(timeLineSearchPanel);
+        timeLinePanel.add(fileRrepresentationPanel);
+        timeLinePanel.add(statPanel);
+        timeLinePanel.add(detailPanel);
+	}
 }
