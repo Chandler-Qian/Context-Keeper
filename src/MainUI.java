@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 import java.util.logging.Level;
@@ -1310,20 +1311,96 @@ public class MainUI{
         timeLinePanel.setLayout(null);
         timeLinePanel.setBounds(0,155,1200,645);
         Date date = new Date();
-        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance(); 
+        Calendar c1 = Calendar.getInstance();
+        int day=c.get(Calendar.DATE);
+        int day1 = c1.get(Calendar.DATE);
+        
+        
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy/MM/dd");
         String presentDate = dateFormat.format(date);
         
         
         JPanel timeLineSearchPanel = new BackgroundPanel(image);
         JPanel fileRrepresentationPanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
-        JPanel statPanel = new JPanel();
+        JPanel otherFilePanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
         JPanel detailPanel = new BackgroundPanel(resultbackground);
+        JPanel fileRepresentTitle = new BackgroundPanel(resulttitle);
+        JPanel otherFileTitle = new BackgroundPanel(resulttitle);
+        JPanel musicTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
+        JPanel wordTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
+        JPanel videoTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
+        JPanel picTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
+        JPanel exeTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
+        
+        JPanel musicResultPanel = new JPanel();
+        JPanel exeResultPanel = new JPanel();
+        JPanel videoResultPanel = new JPanel();
+        JPanel picResultPanel = new JPanel();
+        JPanel wordResultPanel = new JPanel();
+        
+        JScrollPane musicScrollPane = new JScrollPane(musicResultPanel);
+        JScrollPane exeScrollPane = new JScrollPane(exeResultPanel);
+        JScrollPane picScrollPane = new JScrollPane(picResultPanel);
+        JScrollPane wordScrollPane = new JScrollPane(wordResultPanel);
+        JScrollPane videoScrollPane = new JScrollPane(videoResultPanel);
+        
+        
+        musicTypeBackground.add(musicScrollPane);
+        videoTypeBackground.add(videoScrollPane);
+        exeTypeBackground.add(exeScrollPane);
+        wordTypeBackground.add(wordScrollPane);
+        picTypeBackground.add(picScrollPane);
+        
         JSlider timeSlider = new JSlider(0,42,42);  
         JLabel timeLineTitleIcon = new JLabel();
         JLabel timeLineTitleText = new JLabel();
+        JLabel otherFileTitleText = new JLabel("其他");
         JLabel presentText = new JLabel();
         JLabel choosenTime = new JLabel("选择时间 ",SwingConstants.CENTER);
+        JLabel fileText = new JLabel("您要找的是...");
+        JLabel word_icon = new JLabel();
+        JLabel music_icon = new JLabel();
+        JLabel pic_icon = new JLabel();
+        JLabel selectType = new JLabel("请选择文件类型");
+        JLabel video_icon = new JLabel();
+        JLabel exe_icon = new JLabel();
         JComboBox<String> timeScaleBox = new JComboBox<String>();
+        JComboBox<String> selectTypeBox = new JComboBox<String>();
+        
+        musicTypeBackground.setBounds(10, 150, 140, 100);
+        picTypeBackground.setBounds(170, 150, 140, 100);
+        wordTypeBackground.setBounds(330, 150, 140, 100);
+        videoTypeBackground.setBounds(490, 150, 140, 100);
+        exeTypeBackground.setBounds(650, 150, 140, 100);
+        
+        selectTypeBox.setFont(new Font("微软雅黑",Font.BOLD , 13));
+        selectTypeBox.setBounds(160, 30, 200, 30);
+        
+        word_icon.setIcon(new ImageIcon("bin/word_icon.png"));
+        word_icon.setBounds(360, 50, 80, 80);
+        music_icon.setIcon(new ImageIcon("bin/music_icon.png"));
+        music_icon.setBounds(40, 50, 80, 80);
+        pic_icon.setIcon(new ImageIcon("bin/pic_icon.png"));
+        pic_icon.setBounds(200, 50, 80, 80);
+        video_icon.setIcon(new ImageIcon("bin/video_icon.png"));
+        video_icon.setBounds(520, 50, 80, 80);
+        exe_icon.setIcon(new ImageIcon("bin/exe_icon.png"));
+        exe_icon.setBounds(680, 50, 80, 80);
+       
+        selectType.setBounds(30, 30, 150, 30);
+        selectType.setFont(new Font("微软雅黑",Font.BOLD , 15));
+        fileRepresentTitle.setLayout(null);
+        otherFileTitle.setLayout(null);
+        
+        otherFileTitle.setLayout(null);
+        otherFileTitle.setBounds(5, 5, 370, 20);
+        otherFileTitleText.setBounds(10,0,30,20);
+        otherFileTitleText.setFont(new Font("微软雅黑",Font.BOLD , 13));
+        otherFileTitleText.setForeground(Color.white);
+        fileText.setBounds(5, 0, 100, 20);
+        fileText.setForeground(Color.white);
+        fileText.setFont(new Font("微软雅黑",Font.BOLD , 13));
         
         choosenTime.setBounds(150, 35, 500, 30);
         choosenTime.setFont(new Font("微软雅黑",Font.BOLD , 15));
@@ -1335,7 +1412,7 @@ public class MainUI{
         timeLineTitleText.setFont(new Font("微软雅黑",Font.BOLD , 15));
         timeLineTitleText.setText("请确定时间范围");
         
-        presentText.setBounds(660, 65, 150, 20);
+        presentText.setBounds(660, 60, 150, 20);
         presentText.setFont(new Font("微软雅黑",Font.BOLD , 15));
         presentText.setText("今天("+presentDate+")");
         
@@ -1348,7 +1425,7 @@ public class MainUI{
         timeScaleBox.addItem("过去三年");
         timeScaleBox.setFont(new Font("微软雅黑",Font.BOLD , 13));
         timeScaleBox.setFocusable(false);
-        timeScaleBox.setBounds(30, 65, 100, 20);
+        timeScaleBox.setBounds(30, 55, 100, 30);
         
         timeScaleBox.addActionListener(new ActionListener() {
 			
@@ -1359,24 +1436,31 @@ public class MainUI{
 				switch (index) {
 				case 0:
 					timeSlider.setMajorTickSpacing(6);
+					choosenTime.setText("选择时间");
 					break;
 				case 1:
 					timeSlider.setMajorTickSpacing(42);
+					choosenTime.setText("选择时间");
 					break;
 				case 2:
 					timeSlider.setMajorTickSpacing(21);
+					choosenTime.setText("选择时间");
 					break;
 				case 3:
 					timeSlider.setMajorTickSpacing(21);
+					choosenTime.setText("选择时间");
 					break;
 				case 4:
 					timeSlider.setMajorTickSpacing(42);
+					choosenTime.setText("选择时间");
 					break;
 				case 5:
 					timeSlider.setMajorTickSpacing(42);
+					choosenTime.setText("选择时间");
 					break;
 				case 6:
 					timeSlider.setMajorTickSpacing(21);
+					choosenTime.setText("选择时间");
 					break;
 
 				default:
@@ -1391,9 +1475,9 @@ public class MainUI{
         timeLineSearchPanel.setLayout(null);
         timeLineSearchPanel.setBounds(5,5,800,100);
         
-        statPanel.setLayout(null);
-        statPanel.setBackground(Color.WHITE);
-        statPanel.setBounds(810,5,380,300);
+        otherFilePanel.setLayout(null);
+        otherFilePanel.setBackground(Color.WHITE);
+        otherFilePanel.setBounds(810,5,380,300);
         detailPanel.setLayout(null);
         detailPanel.setBounds(810,310,380,300);
         
@@ -1405,6 +1489,10 @@ public class MainUI{
         timeSlider.setOpaque(false);
         timeLineSearchPanel.add(timeSlider);
         
+        fileRepresentTitle.setBounds(10,5,780, 20);
+
+        otherFileTitle.add(otherFileTitleText);
+        fileRepresentTitle.add(fileText);
         timeSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -1415,40 +1503,246 @@ public class MainUI{
 						if(timeSlider.getValue() == 42){
 							choosenTime.setText("今天 "+presentDate);
 						}
+						if(timeSlider.getValue() == 36){
+							Calendar c = Calendar.getInstance(); 
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-1); 
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("昨天 "+newDay);
+						}
+						if(timeSlider.getValue() == 30){
+							Calendar c = Calendar.getInstance(); 
+						    int day=c.get(Calendar.DATE);  
+							c.set(Calendar.DATE,day-2); 
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("前天 "+newDay);
+						}
+						if(timeSlider.getValue() == 24){
+							Calendar c = Calendar.getInstance(); 
+						    int day=c.get(Calendar.DATE);  
+							c.set(Calendar.DATE,day-3); 
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("大前天 "+newDay);
+						}
+						if(timeSlider.getValue() == 18){
+							Calendar c = Calendar.getInstance(); 
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-4); 
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("四天前 "+newDay);
+						}
+						if(timeSlider.getValue() == 12){
+						    Calendar c = Calendar.getInstance(); 
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-5); 
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("五天前 "+newDay);
+						}
+						if(timeSlider.getValue() == 6){
+							Calendar c = Calendar.getInstance(); 
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-6); 
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("六天前 "+newDay);
+						}
+						if(timeSlider.getValue() == 0){
+							Calendar c = Calendar.getInstance(); 
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-7); 
+					        String newDay =new SimpleDateFormat("yyyy-MM-dd").format(c.getTime()); 
+					        choosenTime.setText("七天前 "+newDay);
+						}
 						
 					}
-					if(timeScaleBox.getSelectedIndex() == 0){
+					//过去两周
+					if(timeScaleBox.getSelectedIndex() == 1){
+						if(timeSlider.getValue() == 0){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-7);
+							c1.set(Calendar.DATE,day-14);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("一周到两周前 "+newDay);
+						}
+						if(timeSlider.getValue() == 42){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day);
+							c1.set(Calendar.DATE,day-7);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("一周以内 "+newDay);
+						}
+					}
+					//过去一个月
+					if(timeScaleBox.getSelectedIndex() == 2){
+						
+						if(timeSlider.getValue() == 0){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-20);
+							c1.set(Calendar.DATE,day-30);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("20到30天前 "+newDay);
+						}
+						if(timeSlider.getValue() == 21){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-10);
+							c1.set(Calendar.DATE,day-20);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("10到20天前 "+newDay);
+						}
+						if(timeSlider.getValue() == 42){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day);
+							c1.set(Calendar.DATE,day-10);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("10天内 "+newDay);
+						}
 						
 					}
-					if(timeScaleBox.getSelectedIndex() == 0){
-		
+					//过去三个月
+					if(timeScaleBox.getSelectedIndex() == 3){
+						if(timeSlider.getValue() == 0){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-60);
+							c1.set(Calendar.DATE,day-90);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("2到3个月前 "+newDay);
+						}
+						if(timeSlider.getValue() == 21){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-30);
+							c1.set(Calendar.DATE,day-60);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("1到2个月前 "+newDay);
+						}
+						if(timeSlider.getValue() == 42){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day);
+							c1.set(Calendar.DATE,day-30);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("1个月内 "+newDay);
+						}
 					}
-					if(timeScaleBox.getSelectedIndex() == 0){
-		
+					//过去半年
+					if(timeScaleBox.getSelectedIndex() == 4){
+						if(timeSlider.getValue() == 0){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-90);
+							c1.set(Calendar.DATE,day-180);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("1个到2个季度前 "+newDay);
+						}
+						if(timeSlider.getValue() == 42){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day);
+							c1.set(Calendar.DATE,day-90);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("1季度以内 "+newDay);
+						}
 					}
-					if(timeScaleBox.getSelectedIndex() == 0){
-		
+					//过去一年
+					if(timeScaleBox.getSelectedIndex() == 5){
+						if(timeSlider.getValue() == 0){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-180);
+							c1.set(Calendar.DATE,day-365);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("半年到一年前 "+newDay);
+						}
+						if(timeSlider.getValue() == 42){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day);
+							c1.set(Calendar.DATE,day-180);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("半年以内 "+newDay);
+						}
 					}
-					if(timeScaleBox.getSelectedIndex() == 0){
-		
-					}
-					if(timeScaleBox.getSelectedIndex() == 0){
-		
+					//三年以内
+					if(timeScaleBox.getSelectedIndex() == 6){
+						if(timeSlider.getValue() == 0){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-730);
+							c1.set(Calendar.DATE,day-1095);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("2年到3年前 "+newDay);
+						}
+						if(timeSlider.getValue() == 21){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day-730);
+							c1.set(Calendar.DATE,day-365);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("1年到2年前 "+newDay);
+						}
+						if(timeSlider.getValue() == 42){
+							Calendar c = Calendar.getInstance(); 
+						    Calendar c1 = Calendar.getInstance();
+						    int day=c.get(Calendar.DATE);
+							c.set(Calendar.DATE,day);
+							c1.set(Calendar.DATE,day-365);
+					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
+					        choosenTime.setText("1年以内 "+newDay);
+						}
 					}
 				}
 				
 			}
 		});
         
-        timeLinePanel.add(timeLineTitleIcon);
-        timeLinePanel.add(timeScaleBox);
-        timeLinePanel.add(timeLineTitleText);
-        timeLinePanel.add(presentText);
-        timeLinePanel.add(choosenTime);
+        timeLineSearchPanel.add(timeLineTitleIcon);
+        timeLineSearchPanel.add(timeScaleBox);
+        timeLineSearchPanel.add(timeLineTitleText);
+        timeLineSearchPanel.add(presentText);
+        timeLineSearchPanel.add(choosenTime);
+        
+        fileRrepresentationPanel.add(fileRepresentTitle);
+        fileRrepresentationPanel.add(word_icon);
+        fileRrepresentationPanel.add(music_icon);
+        fileRrepresentationPanel.add(pic_icon);
+        fileRrepresentationPanel.add(exe_icon);
+        fileRrepresentationPanel.add(video_icon);
+        fileRrepresentationPanel.add(musicTypeBackground);
+        fileRrepresentationPanel.add(videoTypeBackground);
+        fileRrepresentationPanel.add(picTypeBackground);
+        fileRrepresentationPanel.add(exeTypeBackground);
+        fileRrepresentationPanel.add(wordTypeBackground);
+        
+        otherFilePanel.add(otherFileTitle);
+        otherFilePanel.add(selectType);
+        otherFilePanel.add(selectTypeBox);
+        
+        
         timeLinePanel.add(timeLineSearchPanel);
         timeLinePanel.add(fileRrepresentationPanel);
-        timeLinePanel.add(statPanel);
+        timeLinePanel.add(otherFilePanel);
         timeLinePanel.add(detailPanel);
+        
+        
         
         frame.add(timeLinePanel);
 	}
