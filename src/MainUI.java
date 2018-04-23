@@ -25,7 +25,9 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,10 +44,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ProgressBarUI;
 import javax.swing.text.Utilities;
 
@@ -92,7 +101,7 @@ public class MainUI{
     static JLabel loadingicon;
     static JLabel loadingmessage;
 
-    static JComboBox comboBox=new JComboBox();
+    static JComboBox comboBox = new JComboBox();
     
     static JLabel icon_volume;
 	static JLabel icon_time;
@@ -182,7 +191,24 @@ public class MainUI{
 	
     public static void main(String[] args) throws FileNotFoundException, IOException{
 		
-		//初始化UI
+		//加载Nimbus风格
+    	String lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+    	try {
+			UIManager.setLookAndFeel(lookAndFeel);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	//初始化
 		initUI();
 		initButton();
 		initTimeLineUI();
@@ -210,18 +236,21 @@ public class MainUI{
         Button_funtion3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         
         Button_funtion1.setBorderPainted(false);
+        Button_funtion1.setFocusable(false);
         Button_funtion1.setHorizontalTextPosition(SwingConstants.CENTER);
         Button_funtion1.setBackground(null);
         Button_funtion1.setForeground(Color.white);
         Button_funtion1.setFont(new Font("黑体", Font.BOLD, 13));
 
         Button_funtion2.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        Button_funtion2.setFocusable(false);
         Button_funtion2.setForeground(new Color(38,82,179));
         Button_funtion2.setHorizontalTextPosition(SwingConstants.CENTER);
         Button_funtion2.setBackground(null);
         Button_funtion2.setBorderPainted(false);
        
         Button_funtion3.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+        Button_funtion3.setFocusable(false);
         Button_funtion3.setHorizontalTextPosition(SwingConstants.CENTER);
         Button_funtion3.setForeground(new Color(38,82,179));
         Button_funtion3.setBackground(null);
@@ -1280,12 +1309,81 @@ public class MainUI{
 		// TODO Auto-generated method stub
         timeLinePanel.setLayout(null);
         timeLinePanel.setBounds(0,155,1200,645);
-        frame.add(timeLinePanel);
+        Date date = new Date();
+        SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd");
+        String presentDate = dateFormat.format(date);
+        
         
         JPanel timeLineSearchPanel = new BackgroundPanel(image);
         JPanel fileRrepresentationPanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
         JPanel statPanel = new JPanel();
         JPanel detailPanel = new BackgroundPanel(resultbackground);
+        JSlider timeSlider = new JSlider(0,42,42);  
+        JLabel timeLineTitleIcon = new JLabel();
+        JLabel timeLineTitleText = new JLabel();
+        JLabel presentText = new JLabel();
+        JLabel choosenTime = new JLabel("选择时间 ",SwingConstants.CENTER);
+        JComboBox<String> timeScaleBox = new JComboBox<String>();
+        
+        choosenTime.setBounds(150, 35, 500, 30);
+        choosenTime.setFont(new Font("微软雅黑",Font.BOLD , 15));
+        
+        timeLineTitleIcon.setBounds(10, 10, 30, 30);
+        timeLineTitleIcon.setIcon(new ImageIcon("bin/clock.png"));
+        
+        timeLineTitleText.setBounds(40, 10, 200, 40);
+        timeLineTitleText.setFont(new Font("微软雅黑",Font.BOLD , 15));
+        timeLineTitleText.setText("请确定时间范围");
+        
+        presentText.setBounds(660, 65, 150, 20);
+        presentText.setFont(new Font("微软雅黑",Font.BOLD , 15));
+        presentText.setText("今天("+presentDate+")");
+        
+        timeScaleBox.addItem("过去一周");
+        timeScaleBox.addItem("过去两周");
+        timeScaleBox.addItem("过去一个月");
+        timeScaleBox.addItem("过去三个月");
+        timeScaleBox.addItem("过去半年");
+        timeScaleBox.addItem("过去一年");
+        timeScaleBox.addItem("过去三年");
+        timeScaleBox.setFont(new Font("微软雅黑",Font.BOLD , 13));
+        timeScaleBox.setFocusable(false);
+        timeScaleBox.setBounds(30, 65, 100, 20);
+        
+        timeScaleBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				int index = timeScaleBox.getSelectedIndex();
+				switch (index) {
+				case 0:
+					timeSlider.setMajorTickSpacing(6);
+					break;
+				case 1:
+					timeSlider.setMajorTickSpacing(42);
+					break;
+				case 2:
+					timeSlider.setMajorTickSpacing(21);
+					break;
+				case 3:
+					timeSlider.setMajorTickSpacing(21);
+					break;
+				case 4:
+					timeSlider.setMajorTickSpacing(42);
+					break;
+				case 5:
+					timeSlider.setMajorTickSpacing(42);
+					break;
+				case 6:
+					timeSlider.setMajorTickSpacing(21);
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
         
         fileRrepresentationPanel.setLayout(null);
         fileRrepresentationPanel.setBounds(5,110,800,500);
@@ -1296,13 +1394,63 @@ public class MainUI{
         statPanel.setLayout(null);
         statPanel.setBackground(Color.WHITE);
         statPanel.setBounds(810,5,380,300);
-        
         detailPanel.setLayout(null);
         detailPanel.setBounds(810,310,380,300);
         
+        timeSlider.setBounds(150,60,500,30);
+        timeSlider.setFocusable(false);
+        timeSlider.setPaintTicks(true);
+        timeSlider.setMajorTickSpacing(6);
+        timeSlider.setSnapToTicks(true);
+        timeSlider.setOpaque(false);
+        timeLineSearchPanel.add(timeSlider);
+        
+        timeSlider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				if(!timeSlider.getValueIsAdjusting()){
+					//过去一周的刻度
+					if(timeScaleBox.getSelectedIndex() == 0){
+						if(timeSlider.getValue() == 42){
+							choosenTime.setText("今天 "+presentDate);
+						}
+						
+					}
+					if(timeScaleBox.getSelectedIndex() == 0){
+						
+					}
+					if(timeScaleBox.getSelectedIndex() == 0){
+		
+					}
+					if(timeScaleBox.getSelectedIndex() == 0){
+		
+					}
+					if(timeScaleBox.getSelectedIndex() == 0){
+		
+					}
+					if(timeScaleBox.getSelectedIndex() == 0){
+		
+					}
+					if(timeScaleBox.getSelectedIndex() == 0){
+		
+					}
+				}
+				
+			}
+		});
+        
+        timeLinePanel.add(timeLineTitleIcon);
+        timeLinePanel.add(timeScaleBox);
+        timeLinePanel.add(timeLineTitleText);
+        timeLinePanel.add(presentText);
+        timeLinePanel.add(choosenTime);
         timeLinePanel.add(timeLineSearchPanel);
         timeLinePanel.add(fileRrepresentationPanel);
         timeLinePanel.add(statPanel);
         timeLinePanel.add(detailPanel);
+        
+        frame.add(timeLinePanel);
 	}
+
 }
