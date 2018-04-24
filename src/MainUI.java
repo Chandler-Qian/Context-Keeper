@@ -48,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
@@ -90,6 +91,9 @@ public class MainUI{
     static JPanel userpanel = new JPanel();
     static JPanel searchpanel = new BackgroundPanel(mainbackground);
     static JPanel searchinfo;
+    static JPanel loadingSoftwarePanelBackground;
+    static JPanel timeLineSearchPanel;
+    static JPanel fileRrepresentationPanel;
     static JTextField searchbar=new JTextField("请输入查询关键字（文件名或拓展名）"); 
     static JButton Button_search = new JButton();
     static JButton Button_funtion1 = new JButton("时间线查找",icon);
@@ -97,7 +101,7 @@ public class MainUI{
     static JButton Button_funtion3 = new JButton("精确查找",iconnull);
     
     static Thread searchThread = new Thread();
-    static Thread thread1,thread2,thread3,threadControl;
+    static Thread thread1,thread2,thread3,threadControl,getSoftwareThread,updateLoadingSoftware ;
     static JLabel usericon = new JLabel();
     static JLabel loadingicon;
     static JLabel loadingmessage;
@@ -120,6 +124,8 @@ public class MainUI{
     static Boolean isVolumeGot = false;
     static Boolean isPause = false;
     static Boolean isStop = false;
+    static Boolean isSoftwareGot = false;
+    static Boolean isResultListGot = false;
     static double searchVolume;
     static double searchVolumeTime;
     
@@ -998,7 +1004,6 @@ public class MainUI{
         }
         
       threadControl = new Thread(new Runnable() {
-		
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
@@ -1310,19 +1315,62 @@ public class MainUI{
 		// TODO Auto-generated method stub
         timeLinePanel.setLayout(null);
         timeLinePanel.setBounds(0,155,1200,645);
+        loadingSoftwarePanelBackground = new BackgroundPanel(new ImageIcon("bin/background2.png").getImage());
+        loadingSoftwarePanelBackground.setBackground(Color.white);
+        loadingSoftwarePanelBackground.setBounds(5, 5, 800, 605);
+        loadingSoftwarePanelBackground.setLayout(null);
+        
+
+        
+        JPanel loadingSoftwarePanel;
+        JLabel loadingText = new JLabel("系统正在初始化，请稍候...",SwingConstants.CENTER);
+        loadingText.setFont(new Font("微软雅黑", Font.BOLD, 18));
+        loadingText.setBounds(200,140,400,30);
+        
+        loadingSoftwarePanel = new BackgroundPanel(new ImageIcon("bin/loading2.gif").getImage());
+        loadingSoftwarePanel.setLayout(null);
+        loadingSoftwarePanel.setBounds(200,190,400,300);
+        loadingSoftwarePanelBackground.add(loadingSoftwarePanel);
+        loadingSoftwarePanelBackground.add(loadingText);
+        timeLinePanel.add(loadingSoftwarePanelBackground);
+        
+        //这里记得改成true
+        loadingSoftwarePanelBackground.setVisible(false);
+        
+        
+        class getSoftwareAndBehaviorThread extends Thread{
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if(isResultListGot && GetUserBehavior.ResultList.size()!=0){
+					GetUserBehavior.ResultList.clear();
+					GetUserBehavior.MusicResultList.clear();
+					GetUserBehavior.ExeResultList.clear();
+					GetUserBehavior.VideoResultList.clear();
+					GetUserBehavior.PicResultList.clear();
+					GetUserBehavior.WordResultList.clear();
+					GetUserBehavior.OtherResultList.clear();
+				}
+				new GetUserBehavior();
+				GetUserBehavior.getUserBehavior();
+//				new GetInstalledSoftware();
+			}
+		}
+        
+        new getSoftwareAndBehaviorThread().start();
+        
         Date date = new Date();
-        Calendar c = Calendar.getInstance(); 
-        Calendar c1 = Calendar.getInstance();
-        int day=c.get(Calendar.DATE);
-        int day1 = c1.get(Calendar.DATE);
-        
-        
         SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy/MM/dd");
         String presentDate = dateFormat.format(date);
         
         
-        JPanel timeLineSearchPanel = new BackgroundPanel(image);
-        JPanel fileRrepresentationPanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
+        timeLineSearchPanel = new BackgroundPanel(image);
+        fileRrepresentationPanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
+        //这里记得改成false
+        timeLineSearchPanel.setVisible(true);
+        fileRrepresentationPanel.setVisible(true);
+        
         JPanel otherFilePanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
         JPanel detailPanel = new BackgroundPanel(resultbackground);
         JPanel fileRepresentTitle = new BackgroundPanel(resulttitle);
@@ -1345,7 +1393,33 @@ public class MainUI{
         JScrollPane wordScrollPane = new JScrollPane(wordResultPanel);
         JScrollPane videoScrollPane = new JScrollPane(videoResultPanel);
         
-        
+        musicScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        musicScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        musicScrollPane.setBackground(new Color(91, 155, 213));
+        musicResultPanel.setBackground(new Color(91, 155, 213));
+        musicResultPanel.setBorder(null);
+        picScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        picScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        picScrollPane.setBackground(new Color(91, 155, 213));
+        picResultPanel.setBackground(new Color(91, 155, 213));
+        picResultPanel.setBorder(null);
+        wordScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        wordScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        wordScrollPane.setBackground(new Color(91, 155, 213));
+        wordResultPanel.setBackground(new Color(91, 155, 213));
+        wordResultPanel.setBorder(null);
+        videoScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        videoScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        videoScrollPane.setBackground(new Color(91, 155, 213));
+        videoResultPanel.setBackground(new Color(91, 155, 213));
+        videoResultPanel.setBorder(null);
+        exeScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        exeScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        exeScrollPane.setBackground(new Color(91, 155, 213));
+        exeResultPanel.setBackground(new Color(91, 155, 213));
+        exeResultPanel.setBorder(null);
+
+      
         musicTypeBackground.add(musicScrollPane);
         videoTypeBackground.add(videoScrollPane);
         exeTypeBackground.add(exeScrollPane);
@@ -1368,11 +1442,17 @@ public class MainUI{
         JComboBox<String> timeScaleBox = new JComboBox<String>();
         JComboBox<String> selectTypeBox = new JComboBox<String>();
         
-        musicTypeBackground.setBounds(10, 150, 140, 100);
-        picTypeBackground.setBounds(170, 150, 140, 100);
-        wordTypeBackground.setBounds(330, 150, 140, 100);
-        videoTypeBackground.setBounds(490, 150, 140, 100);
-        exeTypeBackground.setBounds(650, 150, 140, 100);
+        musicTypeBackground.setBounds(10, 150, 140, 40);             
+        picTypeBackground.setBounds(170, 150, 140, 40);
+        wordTypeBackground.setBounds(330, 150, 140, 40);
+        videoTypeBackground.setBounds(490, 150, 140, 40);
+        exeTypeBackground.setBounds(650, 150, 140, 40);
+        musicTypeBackground.setVisible(false);
+        exeTypeBackground.setVisible(false);
+        videoTypeBackground.setVisible(false);
+        wordTypeBackground.setVisible(false);
+        picTypeBackground.setVisible(false);
+        
         
         selectTypeBox.setFont(new Font("微软雅黑",Font.BOLD , 13));
         selectTypeBox.setBounds(160, 30, 200, 30);
@@ -1493,6 +1573,8 @@ public class MainUI{
 
         otherFileTitle.add(otherFileTitleText);
         fileRepresentTitle.add(fileText);
+        
+
         timeSlider.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -1501,56 +1583,73 @@ public class MainUI{
 					//过去一周的刻度
 					if(timeScaleBox.getSelectedIndex() == 0){
 						if(timeSlider.getValue() == 42){
+							Calendar c = Calendar.getInstance();
+							Date date = c.getTime();
 							choosenTime.setText("今天 "+presentDate);
+							updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 36){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-1); 
+							Date date = c.getTime();
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("昨天 "+newDay);
+					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 30){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);  
 							c.set(Calendar.DATE,day-2); 
+							Date date = c.getTime();
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("前天 "+newDay);
+					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 24){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);  
 							c.set(Calendar.DATE,day-3); 
+							Date date = c.getTime();
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("大前天 "+newDay);
+					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 18){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
-							c.set(Calendar.DATE,day-4); 
+							c.set(Calendar.DATE,day-4);
+							Date date = c.getTime();
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("四天前 "+newDay);
+					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 12){
 						    Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-5); 
+							Date date = c.getTime();
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("五天前 "+newDay);
+					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 6){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-6); 
+							Date date = c.getTime();
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("六天前 "+newDay);
+					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 0){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-7); 
+							Date date = c.getTime();
 					        String newDay =new SimpleDateFormat("yyyy-MM-dd").format(c.getTime()); 
 					        choosenTime.setText("七天前 "+newDay);
+					        updateTimelineResult(date,date);
 						}
 						
 					}
@@ -1564,6 +1663,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-14);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("一周到两周前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1573,6 +1673,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-7);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("一周以内 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 					}
 					//过去一个月
@@ -1586,6 +1687,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-30);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("20到30天前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 21){
 							Calendar c = Calendar.getInstance(); 
@@ -1595,6 +1697,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-20);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("10到20天前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1604,6 +1707,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-10);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("10天内 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						
 					}
@@ -1617,6 +1721,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-90);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("2到3个月前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 21){
 							Calendar c = Calendar.getInstance(); 
@@ -1626,6 +1731,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-60);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1到2个月前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1635,6 +1741,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-30);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1个月内 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 					}
 					//过去半年
@@ -1647,6 +1754,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-180);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1个到2个季度前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1656,6 +1764,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-90);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1季度以内 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 					}
 					//过去一年
@@ -1668,6 +1777,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-365);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("半年到一年前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1677,6 +1787,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-180);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("半年以内 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 					}
 					//三年以内
@@ -1689,6 +1800,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-1095);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("2年到3年前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 21){
 							Calendar c = Calendar.getInstance(); 
@@ -1698,6 +1810,7 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-365);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1年到2年前 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1707,13 +1820,243 @@ public class MainUI{
 							c1.set(Calendar.DATE,day-365);
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1年以内 "+newDay);
+					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 					}
 				}
 				
 			}
+
+			private void updateTimelineResult(Date startDate, Date endDate) {
+				// TODO Auto-generated method stub
+				musicResultPanel.removeAll();
+				videoResultPanel.removeAll();
+				picResultPanel.removeAll();
+				wordResultPanel.removeAll();
+				exeResultPanel.removeAll();
+				
+				int MusicNumber = GetUserBehavior.MusicResultList.size();
+				int VideoNumber = GetUserBehavior.VideoResultList.size();
+				int PicNumber = GetUserBehavior.PicResultList.size();
+				int WordNumber = GetUserBehavior.WordResultList.size();
+				int ExeNumber = GetUserBehavior.ExeResultList.size();
+				
+				
+				if(MusicNumber == 0){
+					musicTypeBackground.setPreferredSize(new Dimension(140, 40));
+					musicTypeBackground.removeAll();;
+					JLabel currentPanel= new JLabel("没有内容");
+					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+					currentPanel.setForeground(Color.white);
+					currentPanel.setOpaque(false);
+					currentPanel.setHorizontalAlignment(SwingConstants.CENTER);
+					currentPanel.setPreferredSize(new Dimension(140, 20));
+					musicTypeBackground.add(currentPanel);
+					}else{
+						if(MusicNumber <= 13){
+							musicTypeBackground.setBounds(10, 150, 140, 20*(MusicNumber+2)+20);
+							musicResultPanel.setPreferredSize(new Dimension(140, 20*(MusicNumber+2)+20));
+							musicScrollPane.setPreferredSize(new Dimension(140, 20*(MusicNumber+2)+15));
+						}else{
+							musicTypeBackground.setBounds(10, 150, 140, 330);
+							musicResultPanel.setPreferredSize(new Dimension(140, 25*(MusicNumber+2)+30));
+							musicScrollPane.setPreferredSize(new Dimension(140, 320));
+						}
+						for(int i = 0; i<MusicNumber;i++){
+							String name = null;
+							MyToolTip currentPanel = new MyToolTip();
+							currentPanel.setBackground(new Color(139, 142, 143));
+							currentPanel.setOpaque(false);
+							currentPanel.setForeground(Color.WHITE);
+							currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+							currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
+							if(GetUserBehavior.MusicResultList.get(i).getName().contains(".lnk")){
+								int index = GetUserBehavior.MusicResultList.get(i).getName().indexOf(".lnk");
+								name = GetUserBehavior.MusicResultList.get(i).getName().substring(0,index);
+							}else{
+								name = GetUserBehavior.MusicResultList.get(i).getName();
+							}
+							currentPanel.setText(name);
+							currentPanel.setPreferredSize(new Dimension(140, 20));
+							currentPanel.setToolTipText(name);
+							musicResultPanel.add(currentPanel);
+						}
+					
+				}
+				
+				if(PicNumber == 0){
+					picTypeBackground.setPreferredSize(new Dimension(140, 40));
+					picTypeBackground.removeAll();;
+					JLabel currentPanel= new JLabel("没有内容");
+					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+					currentPanel.setForeground(Color.white);
+					currentPanel.setOpaque(false);
+					currentPanel.setHorizontalAlignment(SwingConstants.CENTER);
+					currentPanel.setPreferredSize(new Dimension(140, 20));
+					picTypeBackground.add(currentPanel);
+				}else{
+					if(PicNumber <= 13){
+						picTypeBackground.setBounds(170, 150, 140, 20*(PicNumber+2)+20);
+						picResultPanel.setPreferredSize(new Dimension(140, 20*(PicNumber+2)+20));
+						picScrollPane.setPreferredSize(new Dimension(140, 20*(PicNumber+2)+15));
+					}else{
+						picTypeBackground.setBounds(170, 150, 140, 330);
+						picResultPanel.setPreferredSize(new Dimension(140, 25*(PicNumber+2)+30));
+						picScrollPane.setPreferredSize(new Dimension(140, 320));
+					}
+					for(int i = 0; i<PicNumber;i++){
+						MyToolTip currentPanel = new MyToolTip();
+						currentPanel.setBackground(new Color(139, 142, 143));
+						currentPanel.setOpaque(false);
+						currentPanel.setForeground(Color.WHITE);
+						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
+						String name = null;
+						if(GetUserBehavior.PicResultList.get(i).getName().contains(".lnk")){
+							int index = GetUserBehavior.PicResultList.get(i).getName().indexOf(".lnk");
+							name = GetUserBehavior.PicResultList.get(i).getName().substring(0,index);
+						}else{
+							name = GetUserBehavior.PicResultList.get(i).getName();
+						}
+						currentPanel.setText(name);
+						currentPanel.setPreferredSize(new Dimension(140, 20));
+						currentPanel.setToolTipText(name);
+						picResultPanel.add(currentPanel);
+					}
+				
+			}
+				if(WordNumber == 0){
+					wordTypeBackground.setPreferredSize(new Dimension(140, 40));
+					wordTypeBackground.removeAll();;
+					JLabel currentPanel= new JLabel("没有内容");
+					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+					currentPanel.setForeground(Color.white);
+					currentPanel.setOpaque(false);
+					currentPanel.setHorizontalAlignment(SwingConstants.CENTER);
+					currentPanel.setPreferredSize(new Dimension(140, 20));
+					wordTypeBackground.add(currentPanel);
+				}else{
+					if(WordNumber <= 13){
+						wordTypeBackground.setBounds(330, 150, 140, 20*(WordNumber+2)+20);
+						wordResultPanel.setPreferredSize(new Dimension(140, 20*(WordNumber+2)+20));
+						wordScrollPane.setPreferredSize(new Dimension(140, 20*(WordNumber+2)+15));
+					}else{
+						wordTypeBackground.setBounds(330, 150, 140, 330);
+						wordResultPanel.setPreferredSize(new Dimension(140, 25*(WordNumber+2)+30));
+						wordScrollPane.setPreferredSize(new Dimension(140, 320));
+					}
+					for(int i = 0; i<WordNumber;i++){
+						MyToolTip currentPanel = new MyToolTip();
+						currentPanel.setBackground(new Color(139, 142, 143));
+						currentPanel.setOpaque(false);
+						currentPanel.setForeground(Color.WHITE);
+						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
+						String name = null;
+						if(GetUserBehavior.WordResultList.get(i).getName().contains(".lnk")){
+							int index = GetUserBehavior.WordResultList.get(i).getName().indexOf(".lnk");
+							name = GetUserBehavior.WordResultList.get(i).getName().substring(0,index);
+						}else{
+							name = GetUserBehavior.WordResultList.get(i).getName();
+						}
+						currentPanel.setText(name);
+						currentPanel.setPreferredSize(new Dimension(140, 20));
+						currentPanel.setToolTipText(name);
+						wordResultPanel.add(currentPanel);
+					}
+				
+			}
+				if(VideoNumber == 0){
+					videoTypeBackground.setPreferredSize(new Dimension(140, 40));
+					videoTypeBackground.removeAll();;
+					JLabel currentPanel= new JLabel("没有内容");
+					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+					currentPanel.setForeground(Color.white);
+					currentPanel.setOpaque(false);
+					currentPanel.setHorizontalAlignment(SwingConstants.CENTER);
+					currentPanel.setPreferredSize(new Dimension(140, 20));
+					videoTypeBackground.add(currentPanel);
+				}else{
+					if(VideoNumber <= 13){
+						videoTypeBackground.setBounds(490, 150, 140, 20*(VideoNumber+2)+20);
+						videoResultPanel.setPreferredSize(new Dimension(140, 20*(VideoNumber+2)+20));
+						videoScrollPane.setPreferredSize(new Dimension(140, 20*(VideoNumber+2)+15));
+					}else{
+						videoTypeBackground.setBounds(490, 150, 140, 330);
+						videoResultPanel.setPreferredSize(new Dimension(140, 25*(VideoNumber+2)+30));
+						videoScrollPane.setPreferredSize(new Dimension(140, 320));
+					}
+					for(int i = 0; i<VideoNumber;i++){
+						MyToolTip currentPanel = new MyToolTip();
+						currentPanel.setBackground(new Color(139, 142, 143));
+						currentPanel.setOpaque(false);
+						currentPanel.setForeground(Color.WHITE);
+						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
+						String name = null;
+						if(GetUserBehavior.VideoResultList.get(i).getName().contains(".lnk")){
+							int index = GetUserBehavior.VideoResultList.get(i).getName().indexOf(".lnk");
+							name = GetUserBehavior.VideoResultList.get(i).getName().substring(0,index);
+						}else{
+							name = GetUserBehavior.VideoResultList.get(i).getName();
+						}
+						currentPanel.setText(name);
+						currentPanel.setPreferredSize(new Dimension(140, 20));
+						currentPanel.setToolTipText(name);
+						videoResultPanel.add(currentPanel);
+					}
+				
+			}
+				if(ExeNumber == 0){
+					exeTypeBackground.setPreferredSize(new Dimension(140, 40));
+					exeTypeBackground.removeAll();;
+					JLabel currentPanel= new JLabel("没有内容");
+					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+					currentPanel.setForeground(Color.white);
+					currentPanel.setOpaque(false);
+					currentPanel.setHorizontalAlignment(SwingConstants.CENTER);
+					currentPanel.setPreferredSize(new Dimension(140, 20));
+					exeTypeBackground.add(currentPanel);
+				}else{
+					if(ExeNumber <= 13){
+						exeTypeBackground.setBounds(650, 150, 140, 20*(ExeNumber+2)+20);
+						exeResultPanel.setPreferredSize(new Dimension(140, 20*(ExeNumber+2)+20));
+						exeScrollPane.setPreferredSize(new Dimension(140, 20*(ExeNumber+2)+15));
+					}else{
+						exeTypeBackground.setBounds(650, 150, 140, 330);
+						exeResultPanel.setPreferredSize(new Dimension(140, 25*(ExeNumber+2)+30));
+						exeScrollPane.setPreferredSize(new Dimension(140, 320));
+					}
+					for(int i = 0; i<ExeNumber;i++){
+						MyToolTip currentPanel = new MyToolTip();
+						currentPanel.setBackground(new Color(139, 142, 143));
+						currentPanel.setOpaque(false);
+						currentPanel.setForeground(Color.WHITE);
+						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
+						String name = null;
+						if(GetUserBehavior.ExeResultList.get(i).getName().contains(".lnk")){
+							int index = GetUserBehavior.ExeResultList.get(i).getName().indexOf(".lnk");
+							name = GetUserBehavior.ExeResultList.get(i).getName().substring(0,index);
+						}else{
+							name = GetUserBehavior.ExeResultList.get(i).getName();
+						}
+						currentPanel.setText(name);
+						currentPanel.setPreferredSize(new Dimension(140, 20));
+						currentPanel.setToolTipText(name);
+						exeResultPanel.add(currentPanel);
+					}
+				
+			}
+				
+				wordTypeBackground.setVisible(true);
+				picTypeBackground.setVisible(true);
+				musicTypeBackground.setVisible(true);
+				videoTypeBackground.setVisible(true);
+				exeTypeBackground.setVisible(true);
+			}
 		});
-        
+
         timeLineSearchPanel.add(timeLineTitleIcon);
         timeLineSearchPanel.add(timeScaleBox);
         timeLineSearchPanel.add(timeLineTitleText);
@@ -1736,13 +2079,10 @@ public class MainUI{
         otherFilePanel.add(selectType);
         otherFilePanel.add(selectTypeBox);
         
-        
         timeLinePanel.add(timeLineSearchPanel);
         timeLinePanel.add(fileRrepresentationPanel);
         timeLinePanel.add(otherFilePanel);
         timeLinePanel.add(detailPanel);
-        
-        
         
         frame.add(timeLinePanel);
 	}

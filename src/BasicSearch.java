@@ -22,7 +22,7 @@ public class BasicSearch {
 		getVolumeTime = 0;
 		//定义支持的文件名后缀
 		String suffix[] = {"doc","docx","jpg","rar","zip","html","htm","wps","pdf","bmp","gif","pic","png","tif","wav","mp3","mp4",
-				 "wma","avi","mov","exe","com","iso","ppt","xls","xml","pptx","txt","xlsx"};
+				 "wma","avi","mov","exe","com","iso","ppt","xls","xml","pptx","txt","xlsx","pf"};
 		List<String> suffixList = Arrays.asList(suffix);
 		 
 		//记录开始时间
