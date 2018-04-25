@@ -61,6 +61,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.ProgressBarUI;
+import javax.swing.table.TableModel;
 import javax.swing.text.Utilities;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -1385,6 +1386,25 @@ public class MainUI{
         JPanel picTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
         JPanel exeTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
         
+        JPanel typeResultBackground = new JPanel();
+        JPanel typeResultContent = new JPanel();
+        JLabel pleaseSelect = new JLabel("选择文件类型来查看文件资源",SwingConstants.CENTER);
+        JScrollPane typeResultScroll = new JScrollPane(typeResultContent);
+        pleaseSelect.setPreferredSize(new Dimension(330, 100));
+        typeResultContent.add(pleaseSelect);
+        typeResultBackground.setBounds(30, 80, 330, 200);
+        typeResultScroll.setBounds(0, 0, 330, 200);
+        typeResultBackground.add(typeResultScroll);
+        otherFilePanel.add(typeResultBackground);
+        typeResultBackground.setLayout(null);
+        typeResultBackground.setBackground(Color.white);
+        typeResultScroll.setBackground(Color.white);
+        typeResultContent.setBackground(Color.white);
+
+        typeResultScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        typeResultScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
+        
         JPanel musicResultPanel = new JPanel();
         JPanel exeResultPanel = new JPanel();
         JPanel videoResultPanel = new JPanel();
@@ -1433,7 +1453,7 @@ public class MainUI{
         JSlider timeSlider = new JSlider(0,42,42);  
         JLabel timeLineTitleIcon = new JLabel();
         JLabel timeLineTitleText = new JLabel();
-        JLabel otherFileTitleText = new JLabel("其他");
+        JLabel otherFileTitleText = new JLabel("类型");
         JLabel presentText = new JLabel();
         JLabel choosenTime = new JLabel("选择时间 ",SwingConstants.CENTER);
         JLabel fileText = new JLabel("您要找的是...");
@@ -1458,9 +1478,16 @@ public class MainUI{
         wordTypeBackground.setVisible(false);
         picTypeBackground.setVisible(false);
         
-        
-        selectTypeBox.setFont(new Font("微软雅黑",Font.BOLD , 13));
+        //设置种类框并初始化
+        selectTypeBox.setFont(new Font("微软雅黑",Font.PLAIN , 13));
         selectTypeBox.setBounds(160, 30, 200, 30);
+        String suffix[] = {"doc","docx","jpg","png","exe","pdf","ppt","txt","mp3","rar","zip","html","htm","wps","bmp","gif","pic","tif","wav","mp4",
+				 "wma","avi","mov","com","iso","xls","xml","pptx","xlsx","pf"};
+        for(String type:suffix){
+        	selectTypeBox.addItem(type);
+        }
+        
+      
         
         word_icon.setIcon(new ImageIcon("bin/word_icon.png"));
         word_icon.setBounds(360, 50, 80, 80);
@@ -2305,6 +2332,77 @@ public class MainUI{
 			}
 		});
 
+        selectTypeBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String type = selectTypeBox.getSelectedItem().toString();
+				typeResultContent.removeAll();
+				updateTypeResult(type);
+			}
+
+			private void updateTypeResult(String type) {
+				// TODO Auto-generated method stub
+				if(GetUserBehavior.ResultList.size()==0){
+					MyToolTip currentLabel = new MyToolTip();
+					typeResultContent.add(currentLabel);
+					currentLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+					currentLabel.setHorizontalAlignment(SwingConstants.CENTER);
+					currentLabel.setPreferredSize(new Dimension(330, 20));
+					currentLabel.setText("暂无数据");
+					typeResultContent.add(currentLabel);
+				}else{
+					ArrayList<File> temp = (ArrayList<File>) GetUserBehavior.ResultList.clone();
+					Iterator<File> iterator = temp.iterator();
+					while(iterator.hasNext()){
+						File file = iterator.next();
+						if(!(file.getName().contains("."+type)||file.getName().contains(new String("."+type).toUpperCase()))){
+							iterator.remove();
+						}
+					}
+
+					if (temp.isEmpty()) {
+						MyToolTip currentLabel = new MyToolTip();
+						typeResultContent.add(currentLabel);
+						currentLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+						currentLabel.setHorizontalAlignment(SwingConstants.CENTER);
+						currentLabel.setPreferredSize(new Dimension(330, 20));
+						currentLabel.setText("没有内容");
+						typeResultContent.add(currentLabel);
+					}else{
+						typeResultContent.setPreferredSize(new Dimension(330, 30*temp.size()));
+						for(int i = 0;i<temp.size();i++){
+							MyToolTip currentLabel = new MyToolTip();
+							typeResultContent.add(currentLabel);
+							currentLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+							currentLabel.setHorizontalAlignment(SwingConstants.LEFT);
+							currentLabel.setPreferredSize(new Dimension(330, 20));
+
+							String name = null;
+							if(temp.get(i).getName().contains("."+type)){
+								
+								int index = temp.get(i).getName().indexOf("."+type);
+								name = temp.get(i).getName().substring(0,index)+"."+type;
+							}else if (temp.get(i).getName().contains(".EXE")) {
+								int index = temp.get(i).getName().indexOf(".EXE");
+								name = temp.get(i).getName().substring(0,index)+".exe";
+							}
+							else{
+								name = temp.get(i).getName();
+							}
+								
+							currentLabel.setToolTipText(name);
+							currentLabel.setText(name);
+							typeResultContent.add(currentLabel);
+						}
+
+					}
+
+					
+				}
+			}
+		});
         timeLineSearchPanel.add(timeLineTitleIcon);
         timeLineSearchPanel.add(timeScaleBox);
         timeLineSearchPanel.add(timeLineTitleText);
