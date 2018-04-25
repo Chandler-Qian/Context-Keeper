@@ -68,23 +68,26 @@ public class GetUserBehavior {
 		OtherResultList = new ArrayList<>();
 		
 		for(File file:ResultList){
-			if (file.getName().contains("exe")) {
+			if (file.getName().contains(".EXE")) {
 				ExeResultList.add(file);
 			}
-			else if (file.getName().contains("doc")||file.getName().contains("wps")||file.getName().contains("txt")||file.getName().contains("ppt")||file.getName().contains("xls")||file.getName().contains("htm")) {
+			else if (file.getName().contains(".doc")||file.getName().contains(".wps")||file.getName().contains(".txt")||file.getName().contains(".ppt")||file.getName().contains(".xls")||file.getName().contains(".htm")) {
 				WordResultList.add(file);
 			}
-			else if (file.getName().contains("mp4")||file.getName().contains("avi")||file.getName().contains("mpeg")||file.getName().contains("mov")||file.getName().contains("rmvb")) {
+			else if (file.getName().contains(".mp4")||file.getName().contains(".avi")||file.getName().contains(".mpeg")||file.getName().contains(".mov")||file.getName().contains(".rmvb")) {
 				VideoResultList.add(file);
 			}
-			else if (file.getName().contains("mp3")||file.getName().contains("wav")||file.getName().contains("wma")) {
+			else if (file.getName().contains(".mp3")||file.getName().contains(".wav")||file.getName().contains(".wma")) {
 				MusicResultList.add(file);
 			}
-			else if (file.getName().contains("jpg")||file.getName().contains("png")||file.getName().contains("bmp")||file.getName().contains("gif")||file.getName().contains("pic")||file.getName().contains("jpeg")) {
+			else if (file.getName().contains(".jpg")||file.getName().contains(".png")||file.getName().contains(".bmp")||file.getName().contains(".gif")||file.getName().contains(".pic")||file.getName().contains(".jpeg")) {
 				PicResultList.add(file);
 			}else{
 				OtherResultList.add(file);
 			}
+		}
+		for(File file:ExeResultList){
+			System.out.println(file.getName());
 		}
 	
 	}

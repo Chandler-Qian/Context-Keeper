@@ -25,10 +25,13 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -197,8 +200,8 @@ public class MainUI{
 	}
 	
     public static void main(String[] args) throws FileNotFoundException, IOException{
-		
-		//加载Nimbus风格
+//		
+		//加载Windows风格
     	String lookAndFeel = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
     	try {
 			UIManager.setLookAndFeel(lookAndFeel);
@@ -1320,10 +1323,11 @@ public class MainUI{
         loadingSoftwarePanelBackground.setBounds(5, 5, 800, 605);
         loadingSoftwarePanelBackground.setLayout(null);
         
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         
         JPanel loadingSoftwarePanel;
         JLabel loadingText = new JLabel("系统正在初始化，请稍候...",SwingConstants.CENTER);
+        JLabel currentPanel = new JLabel("没有内容");
         loadingText.setFont(new Font("微软雅黑", Font.BOLD, 18));
         loadingText.setBounds(200,140,400,30);
         
@@ -1447,6 +1451,7 @@ public class MainUI{
         wordTypeBackground.setBounds(330, 150, 140, 40);
         videoTypeBackground.setBounds(490, 150, 140, 40);
         exeTypeBackground.setBounds(650, 150, 140, 40);
+        
         musicTypeBackground.setVisible(false);
         exeTypeBackground.setVisible(false);
         videoTypeBackground.setVisible(false);
@@ -1584,72 +1589,117 @@ public class MainUI{
 					if(timeScaleBox.getSelectedIndex() == 0){
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance();
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							choosenTime.setText("今天 "+presentDate);
-							updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 36){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-1); 
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("昨天 "+newDay);
-					        updateTimelineResult(date,date);
+					        
 						}
 						if(timeSlider.getValue() == 30){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);  
 							c.set(Calendar.DATE,day-2); 
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("前天 "+newDay);
-					        updateTimelineResult(date,date);
+
 						}
 						if(timeSlider.getValue() == 24){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);  
 							c.set(Calendar.DATE,day-3); 
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("大前天 "+newDay);
-					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 18){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-4);
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("四天前 "+newDay);
-					        updateTimelineResult(date,date);
+
 						}
 						if(timeSlider.getValue() == 12){
 						    Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-5); 
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("五天前 "+newDay);
-					        updateTimelineResult(date,date);
+
 						}
 						if(timeSlider.getValue() == 6){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-6); 
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("六天前 "+newDay);
-					        updateTimelineResult(date,date);
 						}
 						if(timeSlider.getValue() == 0){
 							Calendar c = Calendar.getInstance(); 
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-7); 
-							Date date = c.getTime();
+							try {
+								Date date = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy-MM-dd").format(c.getTime()); 
 					        choosenTime.setText("七天前 "+newDay);
-					        updateTimelineResult(date,date);
+
 						}
 						
 					}
@@ -1661,9 +1711,16 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-7);
 							c1.set(Calendar.DATE,day-14);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("一周到两周前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1671,9 +1728,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day);
 							c1.set(Calendar.DATE,day-7);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("一周以内 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 					}
 					//过去一个月
@@ -1685,9 +1750,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-20);
 							c1.set(Calendar.DATE,day-30);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("20到30天前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 						if(timeSlider.getValue() == 21){
 							Calendar c = Calendar.getInstance(); 
@@ -1695,9 +1768,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-10);
 							c1.set(Calendar.DATE,day-20);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("10到20天前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1705,9 +1786,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day);
 							c1.set(Calendar.DATE,day-10);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("10天内 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 						
 					}
@@ -1719,9 +1808,16 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-60);
 							c1.set(Calendar.DATE,day-90);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("2到3个月前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 21){
 							Calendar c = Calendar.getInstance(); 
@@ -1729,9 +1825,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-30);
 							c1.set(Calendar.DATE,day-60);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1到2个月前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1739,9 +1843,16 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day);
 							c1.set(Calendar.DATE,day-30);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1个月内 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 					}
 					//过去半年
@@ -1752,9 +1863,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-90);
 							c1.set(Calendar.DATE,day-180);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1个到2个季度前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1762,9 +1881,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day);
 							c1.set(Calendar.DATE,day-90);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1季度以内 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 					}
 					//过去一年
@@ -1775,9 +1902,16 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-180);
 							c1.set(Calendar.DATE,day-365);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("半年到一年前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1785,9 +1919,16 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day);
 							c1.set(Calendar.DATE,day-180);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("半年以内 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 					}
 					//三年以内
@@ -1798,9 +1939,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-730);
 							c1.set(Calendar.DATE,day-1095);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("2年到3年前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 						if(timeSlider.getValue() == 21){
 							Calendar c = Calendar.getInstance(); 
@@ -1808,9 +1957,16 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day-730);
 							c1.set(Calendar.DATE,day-365);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1年到2年前 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
 						}
 						if(timeSlider.getValue() == 42){
 							Calendar c = Calendar.getInstance(); 
@@ -1818,9 +1974,17 @@ public class MainUI{
 						    int day=c.get(Calendar.DATE);
 							c.set(Calendar.DATE,day);
 							c1.set(Calendar.DATE,day-365);
+							try {
+								Date date = sdf.parse(String.valueOf(c1.get(Calendar.YEAR))+"/"+String.valueOf(c1.get(Calendar.MONTH)+1)+"/"+String.valueOf(c1.get(Calendar.DATE)));
+								Date date2 = sdf.parse(String.valueOf(c.get(Calendar.YEAR))+"/"+String.valueOf(c.get(Calendar.MONTH)+1)+"/"+String.valueOf(c.get(Calendar.DATE)));
+								updateTimelineResult(date,date2);
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					        String newDay =new SimpleDateFormat("yyyy/MM/dd").format(c1.getTime())+" - "+new SimpleDateFormat("yyyy/MM/dd").format(c.getTime()); 
 					        choosenTime.setText("1年以内 "+newDay);
-					        updateTimelineResult(c1.getTime(),c.getTime());
+
 						}
 					}
 				}
@@ -1828,24 +1992,108 @@ public class MainUI{
 			}
 
 			private void updateTimelineResult(Date startDate, Date endDate) {
+				System.out.println(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(startDate)+"----"+new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(endDate));
 				// TODO Auto-generated method stub
+				musicTypeBackground.removeAll();
+				videoTypeBackground.removeAll();
+				picTypeBackground.removeAll();
+				wordTypeBackground.removeAll();
+				exeTypeBackground.removeAll();
+				
 				musicResultPanel.removeAll();
 				videoResultPanel.removeAll();
 				picResultPanel.removeAll();
 				wordResultPanel.removeAll();
 				exeResultPanel.removeAll();
 				
-				int MusicNumber = GetUserBehavior.MusicResultList.size();
-				int VideoNumber = GetUserBehavior.VideoResultList.size();
-				int PicNumber = GetUserBehavior.PicResultList.size();
-				int WordNumber = GetUserBehavior.WordResultList.size();
-				int ExeNumber = GetUserBehavior.ExeResultList.size();
+				musicTypeBackground.add(musicScrollPane);
+		        videoTypeBackground.add(videoScrollPane);
+		        exeTypeBackground.add(exeScrollPane);
+		        wordTypeBackground.add(wordScrollPane);
+		        picTypeBackground.add(picScrollPane);
+				
+		        musicTypeBackground.setBounds(10, 150, 140, 40);             
+		        picTypeBackground.setBounds(170, 150, 140, 40);
+		        wordTypeBackground.setBounds(330, 150, 140, 40);
+		        videoTypeBackground.setBounds(490, 150, 140, 40);
+		        exeTypeBackground.setBounds(650, 150, 140, 40);
+		        
+		        
+				
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(endDate);
+				calendar.add(Calendar.DATE, 1);
+				endDate = calendar.getTime();
+				
+				System.out.println(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(startDate)+"----"+new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(endDate));
+				
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				
+				
+				//首先根据时间段来锁定数据区域
+				ArrayList<File> MusicFile = (ArrayList<File>) GetUserBehavior.MusicResultList.clone();
+				ArrayList<File> WordFile = (ArrayList<File>) GetUserBehavior.WordResultList.clone();
+				ArrayList<File> PicFile = (ArrayList<File>) GetUserBehavior.PicResultList.clone();
+				ArrayList<File> ExeFile = (ArrayList<File>) GetUserBehavior.ExeResultList.clone();
+				ArrayList<File> VideoFile = (ArrayList<File>) GetUserBehavior.VideoResultList.clone();
+				
+				Iterator<File> iterator = MusicFile.iterator();
+				while(iterator.hasNext()){
+					File file = iterator.next();
+					Date date = new Date(file.lastModified());
+					if(date.before(startDate)||date.after(endDate)){
+						iterator.remove();
+					}
+				}
+
+				Iterator<File> iterator1 = VideoFile.iterator();
+				while(iterator1.hasNext()){
+					File file = iterator1.next();
+					Date date = new Date(file.lastModified());
+					if(date.before(startDate)||date.after(endDate)){
+						iterator1.remove();
+					}
+				}
+
+				Iterator<File> iterator2 = WordFile.iterator();
+				while(iterator2.hasNext()){
+					File file = iterator2.next();
+					Date date = new Date(file.lastModified());
+					if(date.before(startDate)||date.after(endDate)){
+						iterator2.remove();
+					}
+				}
+
+				Iterator<File> iterator3 = PicFile.iterator();
+				while(iterator3.hasNext()){
+					File file = iterator3.next();
+					Date date = new Date(file.lastModified());
+					if(date.before(startDate)||date.after(endDate)){
+						iterator3.remove();
+					}
+				}
+				Iterator<File> iterator4 = ExeFile.iterator();
+				while(iterator4.hasNext()){
+					File file = iterator4.next();
+					Date date = new Date(file.lastModified());
+					if(date.before(startDate)||date.after(endDate)){
+						iterator4.remove();
+					}
+				}
+				
+				
+				int MusicNumber = MusicFile.size();
+				int VideoNumber =VideoFile.size();
+				int PicNumber = PicFile.size();
+				int WordNumber = WordFile.size();
+				int ExeNumber = ExeFile.size();
+				
+				System.out.println(MusicFile.size()+" "+PicFile.size()+" "+WordFile.size()+" "+VideoFile.size()+" "+ExeFile.size());
 				
 				
 				if(MusicNumber == 0){
 					musicTypeBackground.setPreferredSize(new Dimension(140, 40));
-					musicTypeBackground.removeAll();;
-					JLabel currentPanel= new JLabel("没有内容");
+					musicTypeBackground.removeAll();
 					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 					currentPanel.setForeground(Color.white);
 					currentPanel.setOpaque(false);
@@ -1870,11 +2118,11 @@ public class MainUI{
 							currentPanel.setForeground(Color.WHITE);
 							currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 							currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
-							if(GetUserBehavior.MusicResultList.get(i).getName().contains(".lnk")){
-								int index = GetUserBehavior.MusicResultList.get(i).getName().indexOf(".lnk");
-								name = GetUserBehavior.MusicResultList.get(i).getName().substring(0,index);
+							if(MusicFile.get(i).getName().contains(".lnk")){
+								int index = MusicFile.get(i).getName().indexOf(".lnk");
+								name = MusicFile.get(i).getName().substring(0,index);
 							}else{
-								name = GetUserBehavior.MusicResultList.get(i).getName();
+								name = MusicFile.get(i).getName();
 							}
 							currentPanel.setText(name);
 							currentPanel.setPreferredSize(new Dimension(140, 20));
@@ -1912,17 +2160,17 @@ public class MainUI{
 						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
 						String name = null;
-						if(GetUserBehavior.PicResultList.get(i).getName().contains(".lnk")){
-							int index = GetUserBehavior.PicResultList.get(i).getName().indexOf(".lnk");
-							name = GetUserBehavior.PicResultList.get(i).getName().substring(0,index);
+						if(PicFile.get(i).getName().contains(".lnk")){
+							int index = PicFile.get(i).getName().indexOf(".lnk");
+							name = PicFile.get(i).getName().substring(0,index);
 						}else{
-							name = GetUserBehavior.PicResultList.get(i).getName();
+							name = PicFile.get(i).getName();
 						}
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
 						currentPanel.setToolTipText(name);
 						picResultPanel.add(currentPanel);
-					}
+					} 
 				
 			}
 				if(WordNumber == 0){
@@ -1953,11 +2201,11 @@ public class MainUI{
 						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
 						String name = null;
-						if(GetUserBehavior.WordResultList.get(i).getName().contains(".lnk")){
-							int index = GetUserBehavior.WordResultList.get(i).getName().indexOf(".lnk");
-							name = GetUserBehavior.WordResultList.get(i).getName().substring(0,index);
+						if(WordFile.get(i).getName().contains(".lnk")){
+							int index = WordFile.get(i).getName().indexOf(".lnk");
+							name = WordFile.get(i).getName().substring(0,index);
 						}else{
-							name = GetUserBehavior.WordResultList.get(i).getName();
+							name = WordFile.get(i).getName();
 						}
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
@@ -1994,11 +2242,11 @@ public class MainUI{
 						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
 						String name = null;
-						if(GetUserBehavior.VideoResultList.get(i).getName().contains(".lnk")){
-							int index = GetUserBehavior.VideoResultList.get(i).getName().indexOf(".lnk");
-							name = GetUserBehavior.VideoResultList.get(i).getName().substring(0,index);
+						if(VideoFile.get(i).getName().contains(".lnk")){
+							int index = VideoFile.get(i).getName().indexOf(".lnk");
+							name = VideoFile.get(i).getName().substring(0,index);
 						}else{
-							name = GetUserBehavior.VideoResultList.get(i).getName();
+							name = VideoFile.get(i).getName();
 						}
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
@@ -2035,11 +2283,11 @@ public class MainUI{
 						currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 						currentPanel.setHorizontalAlignment(SwingConstants.LEFT);
 						String name = null;
-						if(GetUserBehavior.ExeResultList.get(i).getName().contains(".lnk")){
-							int index = GetUserBehavior.ExeResultList.get(i).getName().indexOf(".lnk");
-							name = GetUserBehavior.ExeResultList.get(i).getName().substring(0,index);
+						if(ExeFile.get(i).getName().contains(".EXE")){
+							int index = GetUserBehavior.ExeResultList.get(i).getName().indexOf(".EXE");
+							name = ExeFile.get(i).getName().substring(0,index)+".exe";
 						}else{
-							name = GetUserBehavior.ExeResultList.get(i).getName();
+							name = ExeFile.get(i).getName();
 						}
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
