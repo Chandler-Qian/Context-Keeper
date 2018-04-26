@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -104,6 +105,8 @@ public class MainUI{
     static JButton Button_funtion1 = new JButton("时间线查找",icon);
     static JButton Button_funtion2 = new JButton("关联查找",iconnull);
     static JButton Button_funtion3 = new JButton("精确查找",iconnull);
+    static JButton searchNow;
+    static JTextField pathField,keyField;
     
     static Thread searchThread = new Thread();
     static Thread thread1,thread2,thread3,threadControl,getSoftwareThread,updateLoadingSoftware ;
@@ -275,7 +278,8 @@ public class MainUI{
 		//点击搜索框就清楚提示
 		searchbar.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent e) {
-			 searchbar.setText("");}
+			    
+				searchbar.setText("");}
 	    });
 		
 		//回车搜索监听
@@ -314,15 +318,21 @@ public class MainUI{
                 	System.out.println("Search Key Word Empty!");
                 	searchbar.setText("提示：未输入关键字");
                 }else{
-                	initSearchUI();
-                    searchThread = new Thread(new Runnable(){
-                    	@Override
-                    	public void run() {
-                    		startVolumeTime = System.nanoTime();
-							BasicSearch.SearchFile("C://Users//", keyword);
-                    	}
-                    });
-                    searchThread.start();
+//                    searchThread = new Thread(new Runnable(){
+//                    	@Override
+//                    	public void run() {
+//                    		startVolumeTime = System.nanoTime();
+//							BasicSearch.SearchFile("C://Users//", keyword);
+//                    	}
+//                    });
+//                    searchThread.start();
+                	Button_funtion3.doClick();
+                	Map<String, String> ComputerStatusMap = System.getenv();
+                	String Username = ComputerStatusMap.get("USERNAME");
+                	keyField.setText(keyword);
+                	pathField.setText("C://Users//"+Username);
+                	searchNow.doClick();
+                	
                 }
 
 			}
@@ -507,10 +517,10 @@ public class MainUI{
 		JButton cate_Path = new JButton("路径");
 		JButton openfile = new JButton("...",new ImageIcon("bin/filechooser.png"));
 		JButton deleteAll = new JButton("清除");
-		JButton searchNow = new JButton("开始查找");
+		searchNow = new JButton("开始查找");
 		JFileChooser fileChooser = new JFileChooser();
-		JTextField keyField = new JTextField("请输入关键字");
-		JTextField pathField = new JTextField("精确路径");
+		keyField = new JTextField("请输入关键字");
+		pathField = new JTextField("精确路径");
 		searching.setFont(new Font("微软雅黑", Font.BOLD, 15));
 		searching.setBounds(20,10,500,20);
 	
@@ -1203,8 +1213,6 @@ public class MainUI{
 		// TODO Auto-generated method stub
 		if(isVolumeGot || isStop ||isPause){
 			
-//        	searchinfo.remove(loadingicon);
-//    		searchinfo.remove(loadingmessage);
 
     		loadingicon.setVisible(false);
     		loadingmessage.setVisible(false);
@@ -1402,6 +1410,19 @@ public class MainUI{
 		JButton openFileButton = new JButton("打开文件");
 		JButton singleFileAccess = new JButton("查找关联文件");
 
+		openFileButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					Desktop.getDesktop().open(new File(detailPath.getText()));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		detailPanel.setBounds(810, 310, 380, 300);
 		
 		detailPanel.setLayout(null);
