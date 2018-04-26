@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -613,7 +614,6 @@ public class MainUI{
 		openFileButton.setBounds(170, 55, 150, 20);
 		singleFileAccess.setBounds(170, 85, 150, 20);
 		detailIcon.setBounds(70, 45, 50, 70);
-		detailIcon.setIcon(new ImageIcon("bin/icon_doc.png"));
 		fileLabel.setForeground(new Color(255, 255, 255));
 		fileLabel.setBounds(10,0,30,25);
 		
@@ -959,6 +959,7 @@ public class MainUI{
      													// TODO Auto-generated method stub
      													fileName.setForeground(Color.gray);
      											        
+     													detailIcon.setIcon(GetFileIcon.getBigIcon(BasicSearch.resultlist.get(j)));
 //     													
      													detailName.setText(BasicSearch.resultlist.get(j).getName());
      													double size = BasicSearch.resultlist.get(j).length()/1024.0;
@@ -1378,6 +1379,7 @@ public class MainUI{
         
         JPanel otherFilePanel = new BackgroundPanel(new ImageIcon("bin/timelineBackground.png").getImage());
         JPanel detailPanel = new BackgroundPanel(resultbackground);
+        detailPanel.setVisible(false);
         JPanel fileRepresentTitle = new BackgroundPanel(resulttitle);
         JPanel otherFileTitle = new BackgroundPanel(resulttitle);
         JPanel musicTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
@@ -1386,6 +1388,72 @@ public class MainUI{
         JPanel picTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
         JPanel exeTypeBackground = new BackgroundPanel(new ImageIcon("bin/typeBackground.png").getImage());
         
+        JPanel detailTitlePanel = new BackgroundPanel(resulttitle);
+		JTextArea detailName = new JTextArea("文件名称");
+		JLabel fileLabel = new JLabel("文件",SwingConstants.LEFT);
+		JLabel detailSize = new JLabel("文件大小");
+		JLabel detailTime = new JLabel("上次修改时间");
+		JTextArea detailPath = new JTextArea("文件路径");
+		JLabel nameLabel = new JLabel("文件名称",SwingConstants.CENTER);
+		JLabel sizeLabel = new JLabel("文件大小",SwingConstants.CENTER);
+		JLabel timeLabel = new JLabel("上次修改",SwingConstants.CENTER);
+		JLabel pathLabel = new JLabel("文件路径",SwingConstants.CENTER);
+		JLabel detailIcon = new JLabel();
+		JButton openFileButton = new JButton("打开文件");
+		JButton singleFileAccess = new JButton("查找关联文件");
+
+		detailPanel.setBounds(810, 310, 380, 300);
+		
+		detailPanel.setLayout(null);
+		detailTitlePanel.add(fileLabel);
+		detailTitlePanel.setBounds(5,5,375,25);
+		detailTitlePanel.setLayout(null);
+		openFileButton.setBounds(170, 55, 150, 20);
+		singleFileAccess.setBounds(170, 85, 150, 20);
+		detailIcon.setBounds(70, 45, 50, 70);
+		fileLabel.setForeground(new Color(255, 255, 255));
+		fileLabel.setBounds(10,0,30,25);
+		
+        
+        detailName.setBounds(90, 130, 270, 40);
+        detailName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        detailSize.setBounds(90, 175, 270, 20);
+        detailSize.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        detailTime.setBounds(90, 210, 270, 20);
+        detailTime.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        detailPath.setBounds(90, 245, 270, 60);
+        detailPath.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        
+        nameLabel.setBounds(10, 130, 70, 20);
+        sizeLabel.setBounds(10, 175, 70, 20);
+        timeLabel.setBounds(10, 210, 70, 20);
+        pathLabel.setBounds(10, 245, 70, 20);
+        
+        fileLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        nameLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        timeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        sizeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        pathLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+        detailPath.setBackground(null);
+        detailName.setBackground(null);
+        
+        detailPath.setLineWrap(true);
+        detailName.setLineWrap(true);
+        detailPath.setWrapStyleWord(true);
+        detailName.setWrapStyleWord(true);
+		detailPanel.add(detailTitlePanel);
+		detailPanel.add(detailIcon);
+		detailPanel.add(openFileButton);
+		detailPanel.add(singleFileAccess);
+		detailPanel.add(detailName);
+		detailPanel.add(detailSize);
+		detailPanel.add(detailTime);
+		detailPanel.add(detailPath);
+		detailPanel.add(nameLabel);
+		detailPanel.add(sizeLabel);
+		detailPanel.add(timeLabel);
+		detailPanel.add(pathLabel);
+		
         JPanel typeResultBackground = new JPanel();
         JPanel typeResultContent = new JPanel();
         JLabel pleaseSelect = new JLabel("选择文件类型来查看文件资源",SwingConstants.CENTER);
@@ -1590,8 +1658,7 @@ public class MainUI{
         otherFilePanel.setLayout(null);
         otherFilePanel.setBackground(Color.WHITE);
         otherFilePanel.setBounds(810,5,380,300);
-        detailPanel.setLayout(null);
-        detailPanel.setBounds(810,310,380,300);
+
         
         timeSlider.setBounds(150,60,500,30);
         timeSlider.setFocusable(false);
@@ -2017,6 +2084,33 @@ public class MainUI{
 				}
 				
 			}
+			
+			public void updateDetailPanel(File file,String name){
+				detailIcon.setIcon(GetFileIcon.getBigIcon(file));
+				detailName.setText(name);
+				detailPath.setText(file.getAbsolutePath());
+				java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				String dateTime = df.format(file.lastModified());
+				detailTime.setText(dateTime);
+				double size = file.length()/1024.0;
+					if(size < 1024.0){
+						java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+		    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+						detailSize.setText(newSize+" KB");
+					}
+					else if(size > 1024.0 && size < 1024.0*1024.0){
+						size = size/1024.0;
+						java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+		    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+						detailSize.setText(newSize+" MB");
+					}else{
+						size = size/(1024.0*1024.0);
+						java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+		    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+						detailSize.setText(newSize+" GB");
+					}
+				detailPanel.setVisible(true);
+			}
 
 			private void updateTimelineResult(Date startDate, Date endDate) {
 				System.out.println(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(startDate)+"----"+new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(endDate));
@@ -2138,6 +2232,7 @@ public class MainUI{
 							musicScrollPane.setPreferredSize(new Dimension(140, 320));
 						}
 						for(int i = 0; i<MusicNumber;i++){
+							int j = i;
 							String name = null;
 							MyToolTip currentPanel = new MyToolTip();
 							currentPanel.setBackground(new Color(139, 142, 143));
@@ -2151,9 +2246,44 @@ public class MainUI{
 							}else{
 								name = MusicFile.get(i).getName();
 							}
+							String newName = name;
 							currentPanel.setText(name);
 							currentPanel.setPreferredSize(new Dimension(140, 20));
 							currentPanel.setToolTipText(name);
+							currentPanel.addMouseListener(new MouseListener() {
+								
+								@Override
+								public void mouseReleased(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void mousePressed(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void mouseExited(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void mouseEntered(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									currentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+								}
+								
+								@Override
+								public void mouseClicked(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									updateDetailPanel(MusicFile.get(j),newName);
+
+								}
+
+							});
 							musicResultPanel.add(currentPanel);
 						}
 					
@@ -2161,7 +2291,7 @@ public class MainUI{
 				
 				if(PicNumber == 0){
 					picTypeBackground.setPreferredSize(new Dimension(140, 40));
-					picTypeBackground.removeAll();;
+					picTypeBackground.removeAll();
 					JLabel currentPanel= new JLabel("没有内容");
 					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 					currentPanel.setForeground(Color.white);
@@ -2196,13 +2326,49 @@ public class MainUI{
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
 						currentPanel.setToolTipText(name);
+						String newName = name;
+						int j = i;
+						currentPanel.addMouseListener(new MouseListener() {
+							
+							@Override
+							public void mouseReleased(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mousePressed(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseExited(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseEntered(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								currentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+							}
+							
+							@Override
+							public void mouseClicked(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								updateDetailPanel(PicFile.get(j),newName);
+
+							}
+
+						});
 						picResultPanel.add(currentPanel);
 					} 
 				
 			}
 				if(WordNumber == 0){
 					wordTypeBackground.setPreferredSize(new Dimension(140, 40));
-					wordTypeBackground.removeAll();;
+					wordTypeBackground.removeAll();
 					JLabel currentPanel= new JLabel("没有内容");
 					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 					currentPanel.setForeground(Color.white);
@@ -2237,13 +2403,49 @@ public class MainUI{
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
 						currentPanel.setToolTipText(name);
+						String newName = name;
+						int j = i;
+						currentPanel.addMouseListener(new MouseListener() {
+							
+							@Override
+							public void mouseReleased(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mousePressed(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseExited(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseEntered(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								currentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+							}
+							
+							@Override
+							public void mouseClicked(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								updateDetailPanel(WordFile.get(j),newName);
+
+							}
+
+						});
 						wordResultPanel.add(currentPanel);
 					}
 				
 			}
 				if(VideoNumber == 0){
 					videoTypeBackground.setPreferredSize(new Dimension(140, 40));
-					videoTypeBackground.removeAll();;
+					videoTypeBackground.removeAll();
 					JLabel currentPanel= new JLabel("没有内容");
 					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 					currentPanel.setForeground(Color.white);
@@ -2278,13 +2480,49 @@ public class MainUI{
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
 						currentPanel.setToolTipText(name);
+						String newName = name;
+						int j = i;
+						currentPanel.addMouseListener(new MouseListener() {
+							
+							@Override
+							public void mouseReleased(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mousePressed(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseExited(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseEntered(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								currentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+							}
+							
+							@Override
+							public void mouseClicked(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								updateDetailPanel(VideoFile.get(j),newName);
+
+							}
+
+						});
 						videoResultPanel.add(currentPanel);
 					}
 				
 			}
 				if(ExeNumber == 0){
 					exeTypeBackground.setPreferredSize(new Dimension(140, 40));
-					exeTypeBackground.removeAll();;
+					exeTypeBackground.removeAll();
 					JLabel currentPanel= new JLabel("没有内容");
 					currentPanel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
 					currentPanel.setForeground(Color.white);
@@ -2319,6 +2557,42 @@ public class MainUI{
 						currentPanel.setText(name);
 						currentPanel.setPreferredSize(new Dimension(140, 20));
 						currentPanel.setToolTipText(name);
+						String newName = name;
+						int j = i;
+						currentPanel.addMouseListener(new MouseListener() {
+							
+							@Override
+							public void mouseReleased(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mousePressed(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseExited(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+							@Override
+							public void mouseEntered(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								currentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+							}
+							
+							@Override
+							public void mouseClicked(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								updateDetailPanel(ExeFile.get(j),newName);
+
+							}
+
+						});
 						exeResultPanel.add(currentPanel);
 					}
 				
@@ -2393,6 +2667,71 @@ public class MainUI{
 							}
 								
 							currentLabel.setToolTipText(name);
+							String newName = name;
+							int j = i;
+							currentLabel.addMouseListener(new MouseListener() {
+								
+								@Override
+								public void mouseReleased(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void mousePressed(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void mouseExited(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void mouseEntered(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									currentLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+								}
+								
+								@Override
+								public void mouseClicked(MouseEvent arg0) {
+									// TODO Auto-generated method stub
+									updateDetailPanel(temp.get(j),newName);
+
+								}
+
+								private void updateDetailPanel(File file, String newName) {
+									// TODO Auto-generated method stub
+										detailIcon.setIcon(GetFileIcon.getBigIcon(file));
+										detailName.setText(newName);
+										detailPath.setText(file.getAbsolutePath());
+										java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+										String dateTime = df.format(file.lastModified());
+										detailTime.setText(dateTime);
+										double size = file.length()/1024.0;
+											if(size < 1024.0){
+												java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+								    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+												detailSize.setText(newSize+" KB");
+											}
+											else if(size > 1024.0 && size < 1024.0*1024.0){
+												size = size/1024.0;
+												java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+								    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+												detailSize.setText(newSize+" MB");
+											}else{
+												size = size/(1024.0*1024.0);
+												java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+								    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+												detailSize.setText(newSize+" GB");
+											}
+										detailPanel.setVisible(true);
+									
+								}
+
+							});
 							currentLabel.setText(name);
 							typeResultContent.add(currentLabel);
 						}
@@ -2403,6 +2742,8 @@ public class MainUI{
 				}
 			}
 		});
+        
+
         timeLineSearchPanel.add(timeLineTitleIcon);
         timeLineSearchPanel.add(timeScaleBox);
         timeLineSearchPanel.add(timeLineTitleText);
