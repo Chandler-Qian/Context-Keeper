@@ -229,18 +229,12 @@ public class MainUI{
 		initTimeLineUI();
 		initSingleFileUI();
 		initSearchUI();
+		Button_funtion1.doClick();
 	}
 	
 	
 
-	private static void initSingleFileUI() {
-		// TODO Auto-generated method stub
-		 singleFilePanel.setLayout(null);
-	     singleFilePanel.setBounds(0,155,1200,645);
-	        
-	     frame.add(singleFilePanel);
-	}
-
+	
 	
 
 	private static void initButton() {
@@ -413,7 +407,7 @@ public class MainUI{
  		        searchpanel.setVisible(true);
  			}
  		});
-        
+       
         
 	}
 
@@ -465,6 +459,9 @@ public class MainUI{
         return null;  
 
 	} 
+
+	
+
 	
 	//初始化精确搜索UI
 	private static void initSearchUI(){
@@ -672,11 +669,12 @@ public class MainUI{
         resultPanel.setLayout(null);
         resultPanel.setBounds(5, 110, 785, 500);
         resultTitle.setLayout(null);
+        resultTitle.setBounds(10, 5, 770, 20);
         resultlist.setForeground(new Color(255, 255, 255));
         resultlist.setFont(new Font("微软雅黑", Font.PLAIN, 13));
         resultlist.setBounds(17, 0, 70, 20);
         resultTitle.add(resultlist);
-        resultTitle.setBounds(10, 5, 770, 20);
+        
         
         resultItem.setLayout(null);
         resultCategory.setLayout(null);
@@ -1322,10 +1320,67 @@ public class MainUI{
 		loadingicon.setVisible(true);
 		loadingmessage.setVisible(true);
 	}
+	private static void initSingleFileUI() {
+		// TODO Auto-generated method stub
+		 singleFilePanel.setLayout(null);
+	     singleFilePanel.setBounds(0,155,1200,645);
+	     
+	     JPanel controlPanel = new BackgroundPanel(image);
+	     JLabel timeLabel = new JLabel("时间区间：");
+	     JLabel typeLabel = new JLabel("类型选择:");
+         JLabel titleLabel = new JLabel("请选择关联条件");
+	     JPanel resultPanel = new BackgroundPanel(resultbackground);
+	     JPanel rootFilePanel = new BackgroundPanel(resultbackground);
+	     JPanel selectedFilePanel = new BackgroundPanel(resultbackground);
+	     JComboBox<String> timeBox = new JComboBox<>();
+	     JComboBox<String> typeBox = new JComboBox<>();
+
+
+	     rootFilePanel.setLayout(null);
+	     rootFilePanel.setBounds(810, 5, 380, 300);
+	     selectedFilePanel.setLayout(null);
+	     selectedFilePanel.setBounds(810, 310, 380, 300);
+	     selectedFilePanel.setVisible(false);
+	     resultPanel.setLayout(null);
+	     resultPanel.setBounds(5, 110, 800, 500);
+	     controlPanel.setLayout(null);
+	     controlPanel.setBounds(5,5,800,100);
+	     
+	     String suffix[] = {"doc","docx","jpg","png","exe","pdf","ppt","txt","mp3","rar","zip","html","htm","wps","bmp","gif","pic","tif","wav","mp4",
+				 "wma","avi","mov","com","iso","xls","xml","pptx","xlsx","pf"};
+        for(String type:suffix){
+        	typeBox.addItem(type);
+        }
+        
+        timeBox.addItem("前后三天之内");
+        timeBox.addItem("前后一周之内");
+        timeBox.addItem("前后半个月之内");
+        timeBox.addItem("前后一个月之内");
+
+        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
+        titleLabel.setBounds(10,10,200,20);
+        timeLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
+        typeLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
+        timeLabel.setBounds(110,45,100,20);
+        timeBox.setBounds(200, 45, 200, 20);
+        typeLabel.setBounds(450, 45, 100, 20);
+        typeBox.setBounds(530, 45, 200, 20);
+	     controlPanel.add(timeLabel);
+	     controlPanel.add(typeLabel);
+	     controlPanel.add(titleLabel);
+	     controlPanel.add(timeBox);
+	     controlPanel.add(typeBox);
+	     singleFilePanel.add(rootFilePanel);
+	     singleFilePanel.add(selectedFilePanel);
+	     singleFilePanel.add(controlPanel);
+	     singleFilePanel.add(resultPanel);
+	     frame.add(singleFilePanel);
+	}
 	
 	//初始化时间线UI
 	private static void initTimeLineUI() {
 		// TODO Auto-generated method stub
+
         timeLinePanel.setLayout(null);
         timeLinePanel.setBounds(0,155,1200,645);
         loadingSoftwarePanelBackground = new BackgroundPanel(new ImageIcon("bin/background2.png").getImage());
@@ -2793,6 +2848,7 @@ public class MainUI{
         timeLinePanel.add(detailPanel);
         
         frame.add(timeLinePanel);
+
 	}
 
 }
