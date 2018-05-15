@@ -108,13 +108,28 @@ public class MainUI{
     static JButton searchNow;
     static JTextField pathField,keyField;
     
+    
     static Thread searchThread = new Thread();
     static Thread thread1,thread2,thread3,threadControl,getSoftwareThread,updateLoadingSoftware ;
     static JLabel usericon = new JLabel();
     static JLabel loadingicon;
     static JLabel loadingmessage;
-
     static JComboBox comboBox = new JComboBox();
+    
+    static JPanel rootFilePanel;
+    static File rootFile;
+    static JLabel rootFileEmptyText;
+    static JTextArea rootName = new JTextArea("文件名称");
+    static JLabel rootSize = new JLabel("文件大小");
+    static JLabel rootTime = new JLabel("上次修改时间");
+    static JTextArea rootPath = new JTextArea("文件路径");
+    static JLabel rootNameLabel = new JLabel("文件名称",SwingConstants.CENTER);
+    static JLabel rootSizeLabel = new JLabel("文件大小",SwingConstants.CENTER);
+    static JLabel rootTimeLabel = new JLabel("上次修改",SwingConstants.CENTER);
+    static JLabel rootPathLabel = new JLabel("文件路径",SwingConstants.CENTER);
+    static JLabel rootIcon = new JLabel();
+    static JButton rootOpenFileButton;
+    static JButton rootSingleFileAccess;
     
     static JLabel icon_volume;
 	static JLabel icon_time;
@@ -229,6 +244,7 @@ public class MainUI{
 		initTimeLineUI();
 		initSingleFileUI();
 		initSearchUI();
+		//点击只显示Funtion1的功能，屏蔽界面组件刷新Bug
 		Button_funtion1.doClick();
 	}
 	
@@ -461,8 +477,406 @@ public class MainUI{
 	} 
 
 	
+	public static void initSingleFileUI() {
+		// TODO Auto-generated method stub
+		 singleFilePanel.setLayout(null);
+	     singleFilePanel.setBounds(0,155,1200,645);
+	     
+	     JPanel controlPanel = new BackgroundPanel(image);
+	     JLabel timeLabel = new JLabel("时间区间：");
+         JLabel titleLabel = new JLabel("请选择关联条件");
+	     JPanel resultPanel = new BackgroundPanel(resultbackground);
+	     rootFilePanel = new BackgroundPanel(resultbackground);
+	     rootFileEmptyText = new JLabel("请在时间线查找或精确查找中选定源文件进行关联查找！");
+	     JPanel selectedFilePanel = new BackgroundPanel(resultbackground);
+	     JComboBox<String> timeBox = new JComboBox<>();
+	     JPanel rootTitlePanel = new BackgroundPanel(resulttitle);
+		 JLabel fileLabel = new JLabel("源文件",SwingConstants.LEFT);
+		 JButton searchButton = new JButton("查找");
+		 searchButton.setBounds(520, 45, 130, 20);
+		 fileLabel.setForeground(new Color(255, 255, 255));
+		 fileLabel.setBounds(5,0,50,25);
+		 fileLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+		 rootTitlePanel.add(fileLabel);
+		 rootTitlePanel.setBounds(5,5,405,25);
+		 rootTitlePanel.setLayout(null);
+		 rootFilePanel.add(rootTitlePanel);
+		 
+	        //ResultPanel的界面设置
+			JPanel resultTitle = new BackgroundPanel(resulttitle);
+			JPanel resultItem = new JPanel();
+			JPanel resultCategory = new JPanel();
+			JPanel resultListDisplay = new JPanel();
+			JLabel resultlist = new JLabel("查询结果");
+			JLabel noRootFile = new JLabel("抱歉，行为数据中无本源文件，您可能从未人为访问过该源文件...");
+			JLabel noResultFile = new JLabel("无符合条件的文件资源...");
+			JScrollPane resultScroll = new JScrollPane(resultListDisplay);
+			JButton cate_Num = new JButton("序号");
+			JButton cate_Name = new JButton("资源名称");
+			JButton cate_Suffix = new JButton("拓展名");
+			JButton cate_Path = new JButton("路径");
+			resultTitle.setLayout(null);
+	        
+	        resultTitle.add(resultlist);
+	        
+	        resultPanel.setLayout(null);
+	        resultPanel.setBounds(5, 110, 785, 500);
+	        resultTitle.setLayout(null);
+	        resultTitle.setBounds(10, 5, 780, 20);
+	        resultTitle.add(resultlist);
+	        resultlist.setForeground(new Color(255, 255, 255));
+	        resultlist.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+	        resultlist.setBounds(17, 0, 70, 20);
+	        
+	        
+	        noRootFile.setFont(new Font("微软雅黑", Font.BOLD, 15));
+	        noResultFile.setFont(new Font("微软雅黑", Font.BOLD, 15));
+	        
+	        resultItem.setLayout(null);
+	        resultCategory.setLayout(null);
+	        resultCategory.setBackground(null);
+	        resultCategory.setBounds(0, 0, 1000, 20);
+	        resultCategory.add(cate_Num);
+	        resultCategory.add(cate_Name);
+	        resultCategory.add(cate_Suffix);
+	        resultCategory.add(cate_Path);
+	        //信息栏配置字体
+	        cate_Name.setFont(new Font("宋体",Font.PLAIN,13));
+	        cate_Num.setFont(new Font("宋体",Font.PLAIN,13));
+	        cate_Path.setFont(new Font("宋体",Font.PLAIN,13));
+	        cate_Suffix.setFont(new Font("宋体",Font.PLAIN,13));
+	        
+	        
+	        
+	        cate_Num.setBounds(0,0,70,20);
+	        cate_Name.setBounds(70,0,220,20);
+	        cate_Suffix.setBounds(290,0,80,20);
+	        cate_Suffix.setHorizontalTextPosition(SwingConstants.LEFT);
+	        cate_Path.setBounds(370,0,630,20);
 
+	        
+	        resultListDisplay.add(resultCategory);
+
+	        resultListDisplay.setLayout(null);
+	        resultScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+	        resultScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	        resultScroll.setBounds(10, 25, 780, 470);
+	        resultPanel.add(resultScroll);
+	        resultPanel.add(resultTitle);
+	        
+	     rootFilePanel.setLayout(null);
+	     rootFilePanel.setBounds(810, 5, 380, 300);
+	     rootFileEmptyText.setBounds(20, 140, 350, 20);
+	     rootFileEmptyText.setFont(new Font("微软雅黑", Font.BOLD, 13));
+	     rootFilePanel.add(rootFileEmptyText);
+	     selectedFilePanel.setLayout(null);
+	     selectedFilePanel.setBounds(810, 310, 380, 300);
+	     selectedFilePanel.setVisible(false);
+	     resultPanel.setLayout(null);
+	     resultPanel.setBounds(5, 110, 800, 500);
+	     controlPanel.setLayout(null);
+	     controlPanel.setBounds(5,5,800,100);
+        
+        timeBox.addItem("前后三天之内");
+        timeBox.addItem("前后一周之内");
+        timeBox.addItem("前后半个月之内");
+        timeBox.addItem("前后一个月之内");
+
+        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
+        titleLabel.setBounds(10,10,200,20);
+        timeLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
+
+        timeLabel.setBounds(150,45,100,20);
+        timeBox.setBounds(240, 45, 200, 20);
+
+
+	     controlPanel.add(timeLabel);
+	     controlPanel.add(titleLabel);
+	     controlPanel.add(timeBox);
+	     controlPanel.add(searchButton);
+	     
+	     JPanel targetTitlePanel = new BackgroundPanel(resulttitle);
+		 JLabel targetLabel = new JLabel("选中文件",SwingConstants.LEFT);
+		 targetLabel.setForeground(new Color(255, 255, 255));
+		 targetLabel.setBounds(5,0,50,25);
+		 targetLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+		 targetTitlePanel.add(targetLabel);
+		 targetTitlePanel.setBounds(5,5,405,25);
+		 targetTitlePanel.setLayout(null);
+		 selectedFilePanel.add(targetTitlePanel);
+		 JButton openFile = new JButton("打开文件");
+		 JButton singleFile = new JButton("查找关联文件");
+         openFile.setBounds(200, 45, 150, 20);
+         singleFile.setBounds(200, 75, 150, 20);
+         JLabel icon = new JLabel();
+		 icon.setBounds(100, 45, 50, 70);
+		 JTextArea targetName = new JTextArea();  
+		 JLabel targetSize = new JLabel();
+		 JLabel targetTime = new JLabel();
+		 JTextArea targetPath = new JTextArea();
+		 targetName.setBounds(90, 130, 280, 40);
+		 targetName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+		 targetSize.setBounds(90, 175, 280, 20);
+		 targetSize.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+		 targetTime.setBounds(90, 210, 280, 20);
+		 targetTime.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+		 targetPath.setBounds(90, 245, 280, 60);
+		 targetPath.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+		 JLabel selectedNameLabel = new JLabel("文件名称",SwingConstants.CENTER);
+		 JLabel selectedSizeLabel = new JLabel("文件大小",SwingConstants.CENTER);
+		 JLabel selectedTimeLabel = new JLabel("上次修改",SwingConstants.CENTER);
+		 JLabel selectedPathLabel = new JLabel("文件路径",SwingConstants.CENTER);
+		 selectedNameLabel.setBounds(10, 130, 70, 20);
+		 selectedSizeLabel.setBounds(10, 175, 70, 20);
+		 selectedTimeLabel.setBounds(10, 210, 70, 20);
+		 selectedPathLabel.setBounds(10, 245, 70, 20);
+		        
+		        selectedNameLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+		        selectedTimeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+		        selectedSizeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+		        selectedPathLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+		        
+		        targetPath.setBackground(null);
+		        targetName.setBackground(null);
+		        
+		        targetPath.setLineWrap(true);
+		        targetName.setLineWrap(true);
+		        targetPath.setWrapStyleWord(true);
+		        targetName.setWrapStyleWord(true);
+
+
+
+				selectedFilePanel.add(icon);
+				selectedFilePanel.add(openFile);
+				selectedFilePanel.add(singleFile);
+				selectedFilePanel.add(targetName);
+				selectedFilePanel.add(targetSize);
+				selectedFilePanel.add(targetTime);
+				selectedFilePanel.add(targetPath);
+				selectedFilePanel.add(selectedNameLabel);
+				selectedFilePanel.add(selectedSizeLabel);
+				selectedFilePanel.add(selectedTimeLabel);
+				selectedFilePanel.add(selectedPathLabel);
+				
+	     singleFilePanel.add(rootFilePanel);
+	     singleFilePanel.add(selectedFilePanel);
+	     singleFilePanel.add(controlPanel);
+	     singleFilePanel.add(resultPanel);
+	     frame.add(singleFilePanel);
+	     
+	     openFile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					System.out.println("Open"+targetPath.getText());
+					
+					Desktop.getDesktop().open(new File(targetPath.getText()));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+	     singleFile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				rootFile = new File(targetPath.getText());
+				updateRootFileUI();
+			}
+		});
+	     searchButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				//重绘表头
+				resultListDisplay.removeAll();
+				resultListDisplay.add(resultCategory);
+				resultScroll.repaint();
+				int timeSection = timeBox.getSelectedIndex();
+				if(rootFile != null){
+					//根据rootFile处理数据
+					ArrayList<File> resultFile = (ArrayList<File>) GetUserBehavior.ResultList.clone();
+					if(!resultFile.isEmpty()){
+						//先根据时间分离出需要的内容
+						if(resultFile.contains(rootFile)){
+							System.out.println("_____________________________________________contains it!");
+							java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy/MM/dd");
+								Calendar c1 = Calendar.getInstance();
+							    Calendar c2 = Calendar.getInstance();
+							    Date date = new Date(rootFile.lastModified());
+							    c1.setTime(date);
+							    c2.setTime(date);
+							//三天之内
+							if(timeSection == 0){
+								c1.add(Calendar.DATE, -3);
+								c2.add(Calendar.DATE, 3);
+								System.out.println(df.format(c1.getTime())+"--------"+df.format(c2.getTime()));
+							}
+							//一周之内
+							if(timeSection == 1){
+								c1.add(Calendar.DATE,-7);
+								c2.add(Calendar.DATE,+7);
+								System.out.println(df.format(c1.getTime())+"--------"+df.format(c2.getTime()));
+							}
+							//半个月之内
+							if(timeSection == 2){
+								c1.add(Calendar.DATE,-15);
+								c2.add(Calendar.DATE,+15);
+								System.out.println(df.format(c1.getTime())+"--------"+df.format(c2.getTime()));
+							}
+							//一个月之内
+							if(timeSection == 3){
+								c1.add(Calendar.DATE,-30);
+								c2.add(Calendar.DATE,+30);
+								System.out.println(df.format(c1.getTime())+"--------"+df.format(c2.getTime()));
+							}
+							//按时间过滤
+							Date startDate = c1.getTime();
+							Date endDate = c2.getTime();
+							Iterator<File> iterator = resultFile.iterator();
+							while(iterator.hasNext()){
+								File file = iterator.next();
+								Date tmpDate = new Date(file.lastModified());
+								if(tmpDate.before(startDate)||tmpDate.after(endDate)){
+									iterator.remove();
+								}
+							}
+							
+							for(File file:resultFile){
+								System.out.println(file.getName()+"-------"+df.format(file.lastModified()));
+							}
+							//更新结果UI
+							resultListDisplay.setPreferredSize(new Dimension(780, (resultFile.size()+1)*20));
+					          
+                		 	for(int i = 0; i < resultFile.size();i++){
+                		 		int j = i;
+                		 		JPanel eachItem = new JPanel();
+                		 		eachItem.setLayout(null); 
+                		 		eachItem.setBounds(0, 20*(i+1), 780, 20);
+                		 		JLabel fileSequence = new JLabel(String.valueOf((i+1)));
+                		 		fileSequence.setFont(getFont(13));
+                		 		MyToolTip fileName = new MyToolTip();
+                		 		fileName.setText(resultFile.get(i).getName());
+                		 		fileName.setToolTipText(resultFile.get(i).getName());
+                		 		JLabel fileSuffix = new JLabel((resultFile.get(i).getAbsolutePath().substring(resultFile.get(i).getAbsolutePath().lastIndexOf(".")+1)));
+                		 		MyToolTip filePath = new MyToolTip();
+                		 		filePath.setText(resultFile.get(i).getAbsolutePath());
+                		 		filePath.setToolTipText(resultFile.get(i).getAbsolutePath());
+                		 		fileSequence.setBounds(0,0,70,20);
+                		 		fileSequence.setHorizontalAlignment(SwingConstants.CENTER);
+                		 		fileName.setBounds(70,0,200,20);
+                		 		
+                		 		fileSuffix.setBounds(290,0,80,20);
+                		 		filePath.setBounds(370,0,630,20);
+//                		 		fileSequence.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                		 		fileName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                		 		fileName.setForeground(new Color(0, 0, 139));
+                		 		fileSuffix.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                		 		filePath.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+                		 		
+                		 		fileName.addMouseListener(new MouseListener() {
+									
+									@Override
+									public void mouseReleased(MouseEvent e) {
+										// TODO Auto-generated method stub
+										fileName.setForeground(Color.gray);
+									}
+									
+									@Override
+									public void mousePressed(MouseEvent e) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+									@Override
+									public void mouseExited(MouseEvent e) {
+										// TODO Auto-generated method stub
+										if(fileName.getForeground() != Color.gray){
+											fileName.setForeground(new Color(0, 0, 139));
+											fileName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+										}
+								
+										
+									}
+									
+									@Override
+									public void mouseEntered(MouseEvent e) {
+										// TODO Auto-generated method stub
+							            if(fileName.getForeground() != Color.gray){
+											fileName.setForeground(Color.BLUE);
+											fileName.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+											 fileName.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  
+							            }
+									}
+									
+									@Override
+									public void mouseClicked(MouseEvent e) {
+//										// TODO Auto-generated method stub
+										selectedFilePanel.setVisible(true);
+
+								        
+										icon.setIcon(GetFileIcon.getBigIcon(resultFile.get(j)));
+//										
+										targetName.setText(resultFile.get(j).getName());
+										double size = resultFile.get(j).length()/1024.0;
+										if(size < 1024.0){
+											java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+							    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+											targetSize.setText(newSize+" KB");
+										}
+										else if(size > 1024.0 && size < 1024.0*1024.0){
+											size = size/1024.0;
+											java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+							    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+											targetSize.setText(newSize+" MB");
+										}else{
+											size = size/(1024.0*1024.0);
+											java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+							    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+											targetSize.setText(newSize+" GB");
+										}
+										targetPath.setText(resultFile.get(j).getAbsolutePath());
+										java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+										String dateTime = df.format(resultFile.get(j).lastModified());
+										targetTime.setText(dateTime);
+
+									}
+								});
+                		 		eachItem.add(fileSequence);
+                		 		eachItem.add(fileName);
+                		 		eachItem.add(fileSuffix);
+                		 		eachItem.add(filePath);
+                		 		resultListDisplay.add(eachItem);  
+                		 		resultScroll.validate();
+                		 		resultScroll.repaint();
+
+                		 	}
+							
+						//再根据类型条件过滤
+						}else{
+							System.out.println("_____________________________________________ DONT contains it!");
+							noRootFile.setBounds(150, 50, 600, 100);
+                 			resultListDisplay.add(noRootFile);
+                 			resultScroll.repaint();
+						}
+						
+					}
+				}else{
+					System.out.println("No root target File...");
+				}
+			}
+		});
+	     
+	     
+	}
 	
+	
+
 	//初始化精确搜索UI
 	private static void initSearchUI(){
 		//读取Font
@@ -478,8 +892,8 @@ public class MainUI{
 		
 		JPanel detailPanel = new BackgroundPanel(resultbackground);
 		JPanel detailTitlePanel = new BackgroundPanel(resulttitle);
-		JTextArea detailName = new JTextArea("文件名称");
 		JLabel fileLabel = new JLabel("文件",SwingConstants.LEFT);
+		JTextArea detailName = new JTextArea("文件名称");
 		JLabel detailSize = new JLabel("文件大小");
 		JLabel detailTime = new JLabel("上次修改时间");
 		JTextArea detailPath = new JTextArea("文件路径");
@@ -670,10 +1084,11 @@ public class MainUI{
         resultPanel.setBounds(5, 110, 785, 500);
         resultTitle.setLayout(null);
         resultTitle.setBounds(10, 5, 770, 20);
+        resultTitle.add(resultlist);
         resultlist.setForeground(new Color(255, 255, 255));
         resultlist.setFont(new Font("微软雅黑", Font.PLAIN, 13));
         resultlist.setBounds(17, 0, 70, 20);
-        resultTitle.add(resultlist);
+        
         
         
         resultItem.setLayout(null);
@@ -764,7 +1179,16 @@ public class MainUI{
 				pathField.setText("");
 			}
 		});
-        
+        singleFileAccess.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				rootFile = new File(detailPath.getText());
+				updateRootFileUI();
+			}
+
+		});
       
         
         //更新searchitem的线程
@@ -1206,6 +1630,110 @@ public class MainUI{
 		});
 	}
 
+	protected static void updateRootFileUI() {
+		// TODO Auto-generated method stub
+		rootFilePanel.removeAll();
+        rootFilePanel.repaint();
+        
+		JPanel rootTitlePanel = new BackgroundPanel(resulttitle);
+		JLabel fileLabel = new JLabel("源文件",SwingConstants.LEFT);
+		fileLabel.setForeground(new Color(255, 255, 255));
+		fileLabel.setBounds(5,0,50,25);
+		fileLabel.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+		rootTitlePanel.add(fileLabel);
+		rootTitlePanel.setBounds(5,5,405,25);
+		rootTitlePanel.setLayout(null);
+		rootFilePanel.add(rootTitlePanel);
+		if(rootFile != null){
+			
+			rootOpenFileButton = new JButton("打开文件");
+
+			rootOpenFileButton.setBounds(200, 70, 150, 20);
+
+			rootIcon.setBounds(100, 45, 50, 70);
+
+				        
+	        rootName.setBounds(90, 130, 280, 40);
+	        rootName.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+	        rootSize.setBounds(90, 175, 280, 20);
+	        rootSize.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+	        rootTime.setBounds(90, 210, 280, 20);
+	        rootTime.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+	        rootPath.setBounds(90, 245, 280, 60);
+	        rootPath.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+	        
+	        rootNameLabel.setBounds(10, 130, 70, 20);
+	        rootSizeLabel.setBounds(10, 175, 70, 20);
+	        rootTimeLabel.setBounds(10, 210, 70, 20);
+	        rootPathLabel.setBounds(10, 245, 70, 20);
+	        
+	        rootNameLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+	        rootTimeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+	        rootSizeLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+	        rootPathLabel.setFont(new Font("微软雅黑", Font.BOLD, 13));
+	        
+	        rootPath.setBackground(null);
+	        rootName.setBackground(null);
+	        
+	        rootPath.setLineWrap(true);
+	        rootName.setLineWrap(true);
+	        rootPath.setWrapStyleWord(true);
+	        rootName.setWrapStyleWord(true);
+
+	        //更新各个信息板块的内容
+	        rootName.setText(rootFile.getName());
+	        rootPath.setText(rootFile.getAbsolutePath());
+	        rootIcon.setIcon(GetFileIcon.getBigIcon(rootFile));
+			java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			String dateTime = df.format(rootFile.lastModified());
+			rootTime.setText(dateTime);
+			double size = rootFile.length()/1024.0;
+				if(size < 1024.0){
+					java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+	    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+					rootSize.setText(newSize+" KB");
+				}
+				else if(size > 1024.0 && size < 1024.0*1024.0){
+					size = size/1024.0;
+					java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+	    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+					rootSize.setText(newSize+" MB");
+				}else{
+					size = size/(1024.0*1024.0);
+					java.math.BigDecimal bigDecimal = new java.math.BigDecimal(size);
+	    			double newSize = bigDecimal.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+					rootSize.setText(newSize+" GB");
+				}
+
+			rootFilePanel.add(rootIcon);
+			rootFilePanel.add(rootOpenFileButton);
+			rootFilePanel.add(rootName);
+			rootFilePanel.add(rootSize);
+			rootFilePanel.add(rootTime);
+			rootFilePanel.add(rootPath);
+			rootFilePanel.add(rootNameLabel);
+			rootFilePanel.add(rootSizeLabel);
+			rootFilePanel.add(rootTimeLabel);
+			rootFilePanel.add(rootPathLabel);
+			Button_funtion2.doClick();
+			
+			rootOpenFileButton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					try {
+						Desktop.getDesktop().open(rootFile);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			});
+			
+		}
+	}
+
 	//更新搜索信息板块
 	protected static void updateResultPanel() {
 		// TODO Auto-generated method stub
@@ -1320,62 +1848,6 @@ public class MainUI{
 		loadingicon.setVisible(true);
 		loadingmessage.setVisible(true);
 	}
-	private static void initSingleFileUI() {
-		// TODO Auto-generated method stub
-		 singleFilePanel.setLayout(null);
-	     singleFilePanel.setBounds(0,155,1200,645);
-	     
-	     JPanel controlPanel = new BackgroundPanel(image);
-	     JLabel timeLabel = new JLabel("时间区间：");
-	     JLabel typeLabel = new JLabel("类型选择:");
-         JLabel titleLabel = new JLabel("请选择关联条件");
-	     JPanel resultPanel = new BackgroundPanel(resultbackground);
-	     JPanel rootFilePanel = new BackgroundPanel(resultbackground);
-	     JPanel selectedFilePanel = new BackgroundPanel(resultbackground);
-	     JComboBox<String> timeBox = new JComboBox<>();
-	     JComboBox<String> typeBox = new JComboBox<>();
-
-
-	     rootFilePanel.setLayout(null);
-	     rootFilePanel.setBounds(810, 5, 380, 300);
-	     selectedFilePanel.setLayout(null);
-	     selectedFilePanel.setBounds(810, 310, 380, 300);
-	     selectedFilePanel.setVisible(false);
-	     resultPanel.setLayout(null);
-	     resultPanel.setBounds(5, 110, 800, 500);
-	     controlPanel.setLayout(null);
-	     controlPanel.setBounds(5,5,800,100);
-	     
-	     String suffix[] = {"doc","docx","jpg","png","exe","pdf","ppt","txt","mp3","rar","zip","html","htm","wps","bmp","gif","pic","tif","wav","mp4",
-				 "wma","avi","mov","com","iso","xls","xml","pptx","xlsx","pf"};
-        for(String type:suffix){
-        	typeBox.addItem(type);
-        }
-        
-        timeBox.addItem("前后三天之内");
-        timeBox.addItem("前后一周之内");
-        timeBox.addItem("前后半个月之内");
-        timeBox.addItem("前后一个月之内");
-
-        titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
-        titleLabel.setBounds(10,10,200,20);
-        timeLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
-        typeLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
-        timeLabel.setBounds(110,45,100,20);
-        timeBox.setBounds(200, 45, 200, 20);
-        typeLabel.setBounds(450, 45, 100, 20);
-        typeBox.setBounds(530, 45, 200, 20);
-	     controlPanel.add(timeLabel);
-	     controlPanel.add(typeLabel);
-	     controlPanel.add(titleLabel);
-	     controlPanel.add(timeBox);
-	     controlPanel.add(typeBox);
-	     singleFilePanel.add(rootFilePanel);
-	     singleFilePanel.add(selectedFilePanel);
-	     singleFilePanel.add(controlPanel);
-	     singleFilePanel.add(resultPanel);
-	     frame.add(singleFilePanel);
-	}
 	
 	//初始化时间线UI
 	private static void initTimeLineUI() {
@@ -1465,6 +1937,15 @@ public class MainUI{
 		JButton openFileButton = new JButton("打开文件");
 		JButton singleFileAccess = new JButton("查找关联文件");
 
+		singleFileAccess.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				rootFile = new File(detailPath.getText());
+				updateRootFileUI();
+			}
+		});
 		openFileButton.addActionListener(new ActionListener() {
 			
 			@Override
